@@ -14,16 +14,245 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      aluno_tarefa_status: {
+        Row: {
+          aluno_id: string
+          id: string
+          status: Database["public"]["Enums"]["kanban_status"]
+          tarefa_id: string
+          updated_at: string
+        }
+        Insert: {
+          aluno_id: string
+          id?: string
+          status?: Database["public"]["Enums"]["kanban_status"]
+          tarefa_id: string
+          updated_at?: string
+        }
+        Update: {
+          aluno_id?: string
+          id?: string
+          status?: Database["public"]["Enums"]["kanban_status"]
+          tarefa_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aluno_tarefa_status_tarefa_id_fkey"
+            columns: ["tarefa_id"]
+            isOneToOne: false
+            referencedRelation: "tarefas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      aulas: {
+        Row: {
+          capa_url: string | null
+          created_at: string
+          descricao: string | null
+          id: string
+          iframe_video: string | null
+          liberada: boolean
+          materiais_url: string | null
+          numero: number
+          titulo: string
+          turma_id: string
+        }
+        Insert: {
+          capa_url?: string | null
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          iframe_video?: string | null
+          liberada?: boolean
+          materiais_url?: string | null
+          numero: number
+          titulo: string
+          turma_id: string
+        }
+        Update: {
+          capa_url?: string | null
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          iframe_video?: string | null
+          liberada?: boolean
+          materiais_url?: string | null
+          numero?: number
+          titulo?: string
+          turma_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aulas_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      compromissos: {
+        Row: {
+          created_at: string
+          data_hora: string
+          descricao: string | null
+          id: string
+          titulo: string
+          turma_id: string
+        }
+        Insert: {
+          created_at?: string
+          data_hora: string
+          descricao?: string | null
+          id?: string
+          titulo: string
+          turma_id: string
+        }
+        Update: {
+          created_at?: string
+          data_hora?: string
+          descricao?: string | null
+          id?: string
+          titulo?: string
+          turma_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compromissos_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          approved: boolean
+          created_at: string
+          email: string
+          id: string
+          nome: string
+          telefone: string | null
+          turma_id: string | null
+        }
+        Insert: {
+          approved?: boolean
+          created_at?: string
+          email: string
+          id: string
+          nome: string
+          telefone?: string | null
+          turma_id?: string | null
+        }
+        Update: {
+          approved?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          nome?: string
+          telefone?: string | null
+          turma_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tarefas: {
+        Row: {
+          aula_id: string
+          created_at: string
+          descricao: string | null
+          id: string
+          titulo: string
+        }
+        Insert: {
+          aula_id: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          titulo: string
+        }
+        Update: {
+          aula_id?: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tarefas_aula_id_fkey"
+            columns: ["aula_id"]
+            isOneToOne: false
+            referencedRelation: "aulas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      turmas: {
+        Row: {
+          community_link: string | null
+          created_at: string
+          id: string
+          nome: string
+        }
+        Insert: {
+          community_link?: string | null
+          created_at?: string
+          id?: string
+          nome: string
+        }
+        Update: {
+          community_link?: string | null
+          created_at?: string
+          id?: string
+          nome?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "aluno"
+      kanban_status: "a_fazer" | "em_andamento" | "concluida"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +379,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "aluno"],
+      kanban_status: ["a_fazer", "em_andamento", "concluida"],
+    },
   },
 } as const
