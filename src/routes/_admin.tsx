@@ -75,7 +75,7 @@ function Layout() {
 
   return (
     <Ctx.Provider value={{ turmas, selected, setSelected: onSel, refetch }}>
-      <AppShell nav={nav}>
+      <AppShell nav={nav as never}>
         <div className="mx-auto max-w-7xl space-y-6 p-6 md:p-8">
           <div className="flex flex-wrap items-center justify-end gap-2">
             <Select value={selected ?? ""} onValueChange={onSel}>
