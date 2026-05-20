@@ -13,8 +13,13 @@ import { Route as LoginAdminRouteImport } from './routes/login-admin'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CadastroAlunoRouteImport } from './routes/cadastro-aluno'
 import { Route as CadastroAdminRouteImport } from './routes/cadastro-admin'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AcessoAlunoRouteImport } from './routes/acesso-aluno'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminConteudosRouteImport } from './routes/admin/conteudos'
+import { Route as AdminAlunosRouteImport } from './routes/admin/alunos'
+import { Route as AdminAgendaRouteImport } from './routes/admin/agenda'
 
 const LoginAdminRoute = LoginAdminRouteImport.update({
   id: '/login-admin',
@@ -36,6 +41,11 @@ const CadastroAdminRoute = CadastroAdminRouteImport.update({
   path: '/cadastro-admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AcessoAlunoRoute = AcessoAlunoRouteImport.update({
   id: '/acesso-aluno',
   path: '/acesso-aluno',
@@ -46,14 +56,39 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminConteudosRoute = AdminConteudosRouteImport.update({
+  id: '/conteudos',
+  path: '/conteudos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAlunosRoute = AdminAlunosRouteImport.update({
+  id: '/alunos',
+  path: '/alunos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAgendaRoute = AdminAgendaRouteImport.update({
+  id: '/agenda',
+  path: '/agenda',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/acesso-aluno': typeof AcessoAlunoRoute
+  '/admin': typeof AdminRouteWithChildren
   '/cadastro-admin': typeof CadastroAdminRoute
   '/cadastro-aluno': typeof CadastroAlunoRoute
   '/login': typeof LoginRoute
   '/login-admin': typeof LoginAdminRoute
+  '/admin/agenda': typeof AdminAgendaRoute
+  '/admin/alunos': typeof AdminAlunosRoute
+  '/admin/conteudos': typeof AdminConteudosRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,25 +97,39 @@ export interface FileRoutesByTo {
   '/cadastro-aluno': typeof CadastroAlunoRoute
   '/login': typeof LoginRoute
   '/login-admin': typeof LoginAdminRoute
+  '/admin/agenda': typeof AdminAgendaRoute
+  '/admin/alunos': typeof AdminAlunosRoute
+  '/admin/conteudos': typeof AdminConteudosRoute
+  '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/acesso-aluno': typeof AcessoAlunoRoute
+  '/admin': typeof AdminRouteWithChildren
   '/cadastro-admin': typeof CadastroAdminRoute
   '/cadastro-aluno': typeof CadastroAlunoRoute
   '/login': typeof LoginRoute
   '/login-admin': typeof LoginAdminRoute
+  '/admin/agenda': typeof AdminAgendaRoute
+  '/admin/alunos': typeof AdminAlunosRoute
+  '/admin/conteudos': typeof AdminConteudosRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/acesso-aluno'
+    | '/admin'
     | '/cadastro-admin'
     | '/cadastro-aluno'
     | '/login'
     | '/login-admin'
+    | '/admin/agenda'
+    | '/admin/alunos'
+    | '/admin/conteudos'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,19 +138,29 @@ export interface FileRouteTypes {
     | '/cadastro-aluno'
     | '/login'
     | '/login-admin'
+    | '/admin/agenda'
+    | '/admin/alunos'
+    | '/admin/conteudos'
+    | '/admin'
   id:
     | '__root__'
     | '/'
     | '/acesso-aluno'
+    | '/admin'
     | '/cadastro-admin'
     | '/cadastro-aluno'
     | '/login'
     | '/login-admin'
+    | '/admin/agenda'
+    | '/admin/alunos'
+    | '/admin/conteudos'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AcessoAlunoRoute: typeof AcessoAlunoRoute
+  AdminRoute: typeof AdminRouteWithChildren
   CadastroAdminRoute: typeof CadastroAdminRoute
   CadastroAlunoRoute: typeof CadastroAlunoRoute
   LoginRoute: typeof LoginRoute
@@ -138,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CadastroAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/acesso-aluno': {
       id: '/acesso-aluno'
       path: '/acesso-aluno'
@@ -152,12 +218,57 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/conteudos': {
+      id: '/admin/conteudos'
+      path: '/conteudos'
+      fullPath: '/admin/conteudos'
+      preLoaderRoute: typeof AdminConteudosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/alunos': {
+      id: '/admin/alunos'
+      path: '/alunos'
+      fullPath: '/admin/alunos'
+      preLoaderRoute: typeof AdminAlunosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/agenda': {
+      id: '/admin/agenda'
+      path: '/agenda'
+      fullPath: '/admin/agenda'
+      preLoaderRoute: typeof AdminAgendaRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminAgendaRoute: typeof AdminAgendaRoute
+  AdminAlunosRoute: typeof AdminAlunosRoute
+  AdminConteudosRoute: typeof AdminConteudosRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAgendaRoute: AdminAgendaRoute,
+  AdminAlunosRoute: AdminAlunosRoute,
+  AdminConteudosRoute: AdminConteudosRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AcessoAlunoRoute: AcessoAlunoRoute,
+  AdminRoute: AdminRouteWithChildren,
   CadastroAdminRoute: CadastroAdminRoute,
   CadastroAlunoRoute: CadastroAlunoRoute,
   LoginRoute: LoginRoute,
@@ -166,3 +277,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
