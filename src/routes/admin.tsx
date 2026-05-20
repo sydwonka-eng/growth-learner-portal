@@ -26,7 +26,7 @@ export const useTurmas = () => {
   return c;
 };
 
-export const Route = createFileRoute("/_admin")({ component: Layout });
+export const Route = createFileRoute("/admin")({ component: Layout });
 
 const nav = [
   { to: "/admin", label: "Visão Geral", icon: <LayoutGrid className="h-4 w-4" /> },

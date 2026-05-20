@@ -12,12 +12,12 @@ import { Progress } from "@/components/ui/progress";
 import { Pencil, MessageCircle, Check, X, Folder } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { useTurmas } from "@/routes/_admin";
+import { useTurmas } from "@/routes/admin";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_admin/alunos")({ component: Page });
+export const Route = createFileRoute("/admin/alunos")({ component: Page });
 
 interface Aluno {
   id: string; nome: string; email: string; telefone: string | null;

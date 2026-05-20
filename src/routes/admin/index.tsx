@@ -4,11 +4,11 @@ import { Users, UserX, BookOpen, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { useTurmas } from "@/routes/_admin";
+import { useTurmas } from "@/routes/admin";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-export const Route = createFileRoute("/_admin/")({ component: Page });
+export const Route = createFileRoute("/admin/")({ component: Page });
 
 function Page() {
   const { selected } = useTurmas();

@@ -11,12 +11,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus, Calendar as CalIcon, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { useTurmas } from "@/routes/_admin";
+import { useTurmas } from "@/routes/admin";
 import { format, isSameDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_admin/agenda")({ component: Page });
+export const Route = createFileRoute("/admin/agenda")({ component: Page });
 
 interface Compromisso { id: string; titulo: string; descricao: string | null; data_hora: string }
 
