@@ -9,8 +9,38 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginAdminRouteImport } from './routes/login-admin'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as CadastroAlunoRouteImport } from './routes/cadastro-aluno'
+import { Route as CadastroAdminRouteImport } from './routes/cadastro-admin'
+import { Route as AcessoAlunoRouteImport } from './routes/acesso-aluno'
 import { Route as IndexRouteImport } from './routes/index'
 
+const LoginAdminRoute = LoginAdminRouteImport.update({
+  id: '/login-admin',
+  path: '/login-admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroAlunoRoute = CadastroAlunoRouteImport.update({
+  id: '/cadastro-aluno',
+  path: '/cadastro-aluno',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroAdminRoute = CadastroAdminRouteImport.update({
+  id: '/cadastro-admin',
+  path: '/cadastro-admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AcessoAlunoRoute = AcessoAlunoRouteImport.update({
+  id: '/acesso-aluno',
+  path: '/acesso-aluno',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +49,102 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/acesso-aluno': typeof AcessoAlunoRoute
+  '/cadastro-admin': typeof CadastroAdminRoute
+  '/cadastro-aluno': typeof CadastroAlunoRoute
+  '/login': typeof LoginRoute
+  '/login-admin': typeof LoginAdminRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/acesso-aluno': typeof AcessoAlunoRoute
+  '/cadastro-admin': typeof CadastroAdminRoute
+  '/cadastro-aluno': typeof CadastroAlunoRoute
+  '/login': typeof LoginRoute
+  '/login-admin': typeof LoginAdminRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/acesso-aluno': typeof AcessoAlunoRoute
+  '/cadastro-admin': typeof CadastroAdminRoute
+  '/cadastro-aluno': typeof CadastroAlunoRoute
+  '/login': typeof LoginRoute
+  '/login-admin': typeof LoginAdminRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/acesso-aluno'
+    | '/cadastro-admin'
+    | '/cadastro-aluno'
+    | '/login'
+    | '/login-admin'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/acesso-aluno'
+    | '/cadastro-admin'
+    | '/cadastro-aluno'
+    | '/login'
+    | '/login-admin'
+  id:
+    | '__root__'
+    | '/'
+    | '/acesso-aluno'
+    | '/cadastro-admin'
+    | '/cadastro-aluno'
+    | '/login'
+    | '/login-admin'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AcessoAlunoRoute: typeof AcessoAlunoRoute
+  CadastroAdminRoute: typeof CadastroAdminRoute
+  CadastroAlunoRoute: typeof CadastroAlunoRoute
+  LoginRoute: typeof LoginRoute
+  LoginAdminRoute: typeof LoginAdminRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login-admin': {
+      id: '/login-admin'
+      path: '/login-admin'
+      fullPath: '/login-admin'
+      preLoaderRoute: typeof LoginAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro-aluno': {
+      id: '/cadastro-aluno'
+      path: '/cadastro-aluno'
+      fullPath: '/cadastro-aluno'
+      preLoaderRoute: typeof CadastroAlunoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro-admin': {
+      id: '/cadastro-admin'
+      path: '/cadastro-admin'
+      fullPath: '/cadastro-admin'
+      preLoaderRoute: typeof CadastroAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/acesso-aluno': {
+      id: '/acesso-aluno'
+      path: '/acesso-aluno'
+      fullPath: '/acesso-aluno'
+      preLoaderRoute: typeof AcessoAlunoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,17 +157,12 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AcessoAlunoRoute: AcessoAlunoRoute,
+  CadastroAdminRoute: CadastroAdminRoute,
+  CadastroAlunoRoute: CadastroAlunoRoute,
+  LoginRoute: LoginRoute,
+  LoginAdminRoute: LoginAdminRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
