@@ -16,12 +16,14 @@ function Page() {
   const { data } = useQuery({
     queryKey: ["admin-overview", selected],
     queryFn: async () => {
+      const { data: alunoRoles } = await supabase.from("user_roles").select("user_id").eq("role", "aluno");
+      const alunoIds = alunoRoles?.map((r) => r.user_id) ?? [];
       const [{ count: alunos }, { count: semTurma }, { count: encontros }, { count: compromissos }, { data: recentes }, { data: proximos }] = await Promise.all([
-        supabase.from("profiles").select("*", { count: "exact", head: true }).eq("turma_id", selected!).eq("approved", true),
-        supabase.from("profiles").select("*", { count: "exact", head: true }).is("turma_id", null).eq("approved", true),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).in("id", alunoIds.length ? alunoIds : ["00000000-0000-0000-0000-000000000000"]).eq("turma_id", selected!).eq("approved", true),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).in("id", alunoIds.length ? alunoIds : ["00000000-0000-0000-0000-000000000000"]).is("turma_id", null).eq("approved", true),
         supabase.from("aulas").select("*", { count: "exact", head: true }).eq("turma_id", selected!),
         supabase.from("compromissos").select("*", { count: "exact", head: true }).eq("turma_id", selected!),
-        supabase.from("profiles").select("id, nome, turma_id, turmas(nome)").eq("approved", true).order("created_at", { ascending: false }).limit(5),
+        supabase.from("profiles").select("id, nome, turma_id, turmas(nome)").in("id", alunoIds.length ? alunoIds : ["00000000-0000-0000-0000-000000000000"]).eq("approved", true).order("created_at", { ascending: false }).limit(5),
         supabase.from("compromissos").select("*").eq("turma_id", selected!).gte("data_hora", new Date().toISOString()).order("data_hora").limit(5),
       ]);
       return { alunos: alunos ?? 0, semTurma: semTurma ?? 0, encontros: encontros ?? 0, compromissos: compromissos ?? 0, recentes: recentes ?? [], proximos: proximos ?? [] };
