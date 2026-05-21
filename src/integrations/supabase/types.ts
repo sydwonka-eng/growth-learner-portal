@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      acessos_vitalicios: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          email: string
+          id: string
+          nota: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          email: string
+          id?: string
+          nota?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          id?: string
+          nota?: string | null
+        }
+        Relationships: []
+      }
       aluno_tarefa_status: {
         Row: {
           aluno_id: string
