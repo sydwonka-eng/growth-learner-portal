@@ -149,12 +149,17 @@ function Page() {
                       <div className="aspect-video w-full overflow-hidden rounded-md [&>iframe]:h-full [&>iframe]:w-full" dangerouslySetInnerHTML={{ __html: t.iframe_video }} />
                     )}
                     {t.materiais_url && (
-                      <Button asChild variant="outline" size="sm">
-                        <a href={t.materiais_url} target="_blank" rel="noreferrer">
-                          <FileText className="mr-2 h-4 w-4" /> Materiais da tarefa
-                        </a>
-                      </Button>
+                      <div className="flex flex-wrap gap-2">
+                        {t.materiais_url.split("\n").filter(Boolean).map((u, i) => (
+                          <Button key={u} asChild variant="outline" size="sm">
+                            <a href={u} target="_blank" rel="noreferrer">
+                              <FileText className="mr-2 h-4 w-4" /> Material {i + 1}
+                            </a>
+                          </Button>
+                        ))}
+                      </div>
                     )}
+
                   </div>
                 </Card>
               );
