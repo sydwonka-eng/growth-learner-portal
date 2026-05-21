@@ -160,28 +160,28 @@ function Table({ rows, turmas, onEdit }: { rows: Aluno[]; turmas: { id: string; 
                 </td>
                 <td className="px-3 py-3 text-muted-foreground">{a.telefone ?? "—"}</td>
                 <td className="px-3 py-3">
-                  {a.id.startsWith("vit-") ? (
-                    <span className="text-muted-foreground">—</span>
-                  ) : (
-                    <Select
-                      value={a.turma_id ?? "none"}
-                      onValueChange={async (v) => {
-                        const novo = v === "none" ? null : v;
-                        const { error } = await supabase.from("profiles").update({ turma_id: novo }).eq("id", a.id);
-                        if (error) return toast.error(error.message);
-                        toast.success("Turma atualizada");
-                        qc.invalidateQueries({ queryKey: ["alunos-all"] });
-                      }}
-                    >
-                      <SelectTrigger className="h-8 w-[160px] bg-secondary/40 text-xs">
-                        <SelectValue placeholder="Sem turma" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">Sem turma</SelectItem>
-                        {turmas.map((t) => <SelectItem key={t.id} value={t.id}>{t.nome}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  )}
+                  <Select
+                    value={a.turma_id ?? "none"}
+                    onValueChange={async (v) => {
+                      const novo = v === "none" ? null : v;
+                      const isVit = a.id.startsWith("vit-");
+                      const { error } = isVit
+                        ? await supabase.from("acessos_vitalicios").update({ turma_id: novo }).eq("id", a.id.replace("vit-", ""))
+                        : await supabase.from("profiles").update({ turma_id: novo }).eq("id", a.id);
+                      if (error) return toast.error(error.message);
+                      toast.success("Turma atualizada");
+                      qc.invalidateQueries({ queryKey: ["alunos-all"] });
+                      qc.invalidateQueries({ queryKey: ["acessos-vitalicios"] });
+                    }}
+                  >
+                    <SelectTrigger className="h-8 w-[160px] bg-secondary/40 text-xs">
+                      <SelectValue placeholder="Sem turma" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Sem turma</SelectItem>
+                      {turmas.map((t) => <SelectItem key={t.id} value={t.id}>{t.nome}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
                 </td>
                 <td className="px-3 py-3 w-40"><div className="flex items-center gap-2"><Progress value={0} className="h-1.5" /><span className="text-xs text-muted-foreground">0%</span></div></td>
                 <td className="px-3 py-3 text-muted-foreground">{format(new Date(a.created_at), "dd 'de' MMM. 'de' yyyy", { locale: ptBR })}</td>
