@@ -139,6 +139,7 @@ function PendingRow({ aluno, onChanged }: { aluno: Aluno; onChanged: () => void 
 }
 
 function Table({ rows, turmas, onEdit }: { rows: Aluno[]; turmas: { id: string; nome: string }[]; onEdit: (a: Aluno) => void }) {
+  const qc = useQueryClient();
   if (!rows.length) return <p className="py-10 text-center text-sm text-muted-foreground">Nenhum aluno aqui ainda.</p>;
   return (
     <div className="overflow-x-auto">
@@ -149,7 +150,6 @@ function Table({ rows, turmas, onEdit }: { rows: Aluno[]; turmas: { id: string; 
         </tr></thead>
         <tbody>
           {rows.map((a) => {
-            const turma = turmas.find((t) => t.id === a.turma_id);
             return (
               <tr key={a.id} className="border-b border-border/50 hover:bg-secondary/40">
                 <td className="px-3 py-3">
@@ -159,7 +159,30 @@ function Table({ rows, turmas, onEdit }: { rows: Aluno[]; turmas: { id: string; 
                   </div>
                 </td>
                 <td className="px-3 py-3 text-muted-foreground">{a.telefone ?? "—"}</td>
-                <td className="px-3 py-3"><span className={turma ? "text-primary" : "text-muted-foreground"}>{turma?.nome ?? "Sem turma"}</span></td>
+                <td className="px-3 py-3">
+                  {a.id.startsWith("vit-") ? (
+                    <span className="text-muted-foreground">—</span>
+                  ) : (
+                    <Select
+                      value={a.turma_id ?? "none"}
+                      onValueChange={async (v) => {
+                        const novo = v === "none" ? null : v;
+                        const { error } = await supabase.from("profiles").update({ turma_id: novo }).eq("id", a.id);
+                        if (error) return toast.error(error.message);
+                        toast.success("Turma atualizada");
+                        qc.invalidateQueries({ queryKey: ["alunos-all"] });
+                      }}
+                    >
+                      <SelectTrigger className="h-8 w-[160px] bg-secondary/40 text-xs">
+                        <SelectValue placeholder="Sem turma" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Sem turma</SelectItem>
+                        {turmas.map((t) => <SelectItem key={t.id} value={t.id}>{t.nome}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </td>
                 <td className="px-3 py-3 w-40"><div className="flex items-center gap-2"><Progress value={0} className="h-1.5" /><span className="text-xs text-muted-foreground">0%</span></div></td>
                 <td className="px-3 py-3 text-muted-foreground">{format(new Date(a.created_at), "dd 'de' MMM. 'de' yyyy", { locale: ptBR })}</td>
                 <td className="px-3 py-3"><div className="flex gap-1">
