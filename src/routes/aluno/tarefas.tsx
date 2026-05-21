@@ -95,6 +95,8 @@ function Page() {
                   <Card key={r.id} className="space-y-2 border-border bg-card p-3">
                     <p className="text-xs text-muted-foreground">Aula {r.aula_numero} · {r.aula_titulo}</p>
                     <p className="text-sm font-medium">{r.titulo}</p>
+                    {r.descricao && <p className="line-clamp-3 text-xs text-muted-foreground">{r.descricao}</p>}
+
                     <Select value={r.status} onValueChange={(v) => mut.mutate({ tarefa_id: r.id, status: v as Status })}>
                       <SelectTrigger className="h-8 bg-secondary text-xs"><SelectValue /></SelectTrigger>
                       <SelectContent>
