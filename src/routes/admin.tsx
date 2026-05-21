@@ -73,10 +73,10 @@ function Layout() {
   return (
     <AdminTurmasProvider value={{ turmas, selected, setSelected: onSel, refetch }}>
       <AppShell nav={nav as never}>
-        <div className="mx-auto max-w-7xl space-y-6 p-6 md:p-8">
-          <div className="flex flex-wrap items-center justify-end gap-2">
+        <div className="mx-auto w-full max-w-7xl space-y-6 p-4 sm:p-6 md:p-8">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center sm:justify-end gap-2">
             <Select value={selected ?? ""} onValueChange={onSel}>
-              <SelectTrigger className="w-[180px] bg-card"><SelectValue placeholder="Selecione turma" /></SelectTrigger>
+              <SelectTrigger className="w-full sm:w-[200px] bg-card"><SelectValue placeholder="Selecione turma" /></SelectTrigger>
               <SelectContent>
                 {turmas.map((t) => <SelectItem key={t.id} value={t.id}>{t.nome}</SelectItem>)}
               </SelectContent>
