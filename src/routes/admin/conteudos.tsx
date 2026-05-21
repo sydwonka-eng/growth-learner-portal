@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Pencil, Plus, ClipboardList, Video, Trash2 } from "lucide-react";
+import { FileUploadButton } from "@/components/FileUploadButton";
 import { supabase } from "@/integrations/supabase/client";
 import { useTurmas } from "@/hooks/use-admin-turmas";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -173,9 +174,9 @@ function EditAulaDialog({ aula, onClose }: { aula: Aula | null; onClose: () => v
         <div className="space-y-3">
           <div><Label>Título</Label><Input value={titulo} onChange={(e) => setTitulo(e.target.value)} /></div>
           <div><Label>Descrição</Label><Textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} rows={3} /></div>
-          <div><Label>URL da Imagem de Capa</Label><Input value={capa} onChange={(e) => setCapa(e.target.value)} placeholder="https://..." /></div>
+          <div><Label>Imagem de Capa</Label><FileUploadButton value={capa} onChange={(v) => setCapa(v ?? "")} label="Fazer upload da imagem de capa" accept="image/*" /></div>
           <div><Label>Iframe do Vídeo</Label><Textarea value={iframe} onChange={(e) => setIframe(e.target.value)} rows={3} placeholder='<iframe src="..."></iframe>' /></div>
-          <div><Label>URL Materiais de Apoio</Label><Input value={materiais} onChange={(e) => setMateriais(e.target.value)} placeholder="https://..." /></div>
+          <div><Label>Materiais de Apoio</Label><FileUploadButton value={materiais} onChange={(v) => setMateriais(v ?? "")} label="Fazer upload dos materiais" accept="*/*" /></div>
         </div>
         <DialogFooter><Button variant="outline" onClick={close}>Cancelar</Button><Button className="bg-flame" onClick={save}>Salvar</Button></DialogFooter>
       </DialogContent>
