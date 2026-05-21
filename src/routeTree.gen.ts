@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TarefasRouteImport } from './routes/tarefas'
 import { Route as LoginAdminRouteImport } from './routes/login-admin'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CadastroAlunoRouteImport } from './routes/cadastro-aluno'
@@ -26,6 +27,11 @@ import { Route as AdminAlunosRouteImport } from './routes/admin/alunos'
 import { Route as AdminAgendaRouteImport } from './routes/admin/agenda'
 import { Route as AlunoAulasAulaIdRouteImport } from './routes/aluno/aulas.$aulaId'
 
+const TarefasRoute = TarefasRouteImport.update({
+  id: '/tarefas',
+  path: '/tarefas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginAdminRoute = LoginAdminRouteImport.update({
   id: '/login-admin',
   path: '/login-admin',
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/cadastro-aluno': typeof CadastroAlunoRoute
   '/login': typeof LoginRoute
   '/login-admin': typeof LoginAdminRoute
+  '/tarefas': typeof TarefasRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/alunos': typeof AdminAlunosRoute
   '/admin/conteudos': typeof AdminConteudosRoute
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/cadastro-aluno': typeof CadastroAlunoRoute
   '/login': typeof LoginRoute
   '/login-admin': typeof LoginAdminRoute
+  '/tarefas': typeof TarefasRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/alunos': typeof AdminAlunosRoute
   '/admin/conteudos': typeof AdminConteudosRoute
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/cadastro-aluno': typeof CadastroAlunoRoute
   '/login': typeof LoginRoute
   '/login-admin': typeof LoginAdminRoute
+  '/tarefas': typeof TarefasRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/alunos': typeof AdminAlunosRoute
   '/admin/conteudos': typeof AdminConteudosRoute
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/cadastro-aluno'
     | '/login'
     | '/login-admin'
+    | '/tarefas'
     | '/admin/agenda'
     | '/admin/alunos'
     | '/admin/conteudos'
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/cadastro-aluno'
     | '/login'
     | '/login-admin'
+    | '/tarefas'
     | '/admin/agenda'
     | '/admin/alunos'
     | '/admin/conteudos'
@@ -205,6 +216,7 @@ export interface FileRouteTypes {
     | '/cadastro-aluno'
     | '/login'
     | '/login-admin'
+    | '/tarefas'
     | '/admin/agenda'
     | '/admin/alunos'
     | '/admin/conteudos'
@@ -224,10 +236,18 @@ export interface RootRouteChildren {
   CadastroAlunoRoute: typeof CadastroAlunoRoute
   LoginRoute: typeof LoginRoute
   LoginAdminRoute: typeof LoginAdminRoute
+  TarefasRoute: typeof TarefasRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tarefas': {
+      id: '/tarefas'
+      path: '/tarefas'
+      fullPath: '/tarefas'
+      preLoaderRoute: typeof TarefasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login-admin': {
       id: '/login-admin'
       path: '/login-admin'
@@ -384,6 +404,7 @@ const rootRouteChildren: RootRouteChildren = {
   CadastroAlunoRoute: CadastroAlunoRoute,
   LoginRoute: LoginRoute,
   LoginAdminRoute: LoginAdminRoute,
+  TarefasRoute: TarefasRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
