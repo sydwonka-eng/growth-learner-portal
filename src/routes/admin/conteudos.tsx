@@ -224,7 +224,7 @@ function EditAulaDialog({ aula, onClose }: { aula: Aula | null; onClose: () => v
             <p className="mt-1 text-xs text-muted-foreground">Tamanho recomendado: 1280x675px (16:9)</p>
           </div>
           <div><Label>Código do Vídeo (iframe)</Label><Textarea value={iframe} onChange={(e) => setIframe(e.target.value)} rows={3} placeholder='<iframe src="..."></iframe>' /></div>
-          <div><Label>Materiais de Apoio (PDFs, Imagens, Documentos)</Label><FileUploadButton value={materiais} onChange={(v) => setMateriais(v ?? "")} label="Fazer upload de materiais" accept="*/*" /></div>
+          <div><Label>Materiais de Apoio (PDFs, Imagens, Documentos)</Label><FileUploadButton value={materiais} onChange={(v) => setMateriais(v ?? "")} label="Fazer upload de materiais" accept="*/*" multiple /></div>
         </div>
         <DialogFooter><Button variant="outline" onClick={close}>Cancelar</Button><Button className="bg-flame" onClick={save}>Salvar</Button></DialogFooter>
       </DialogContent>
@@ -276,7 +276,7 @@ function NewTarefaDialog({ open, onOpenChange, aulas }: { open: boolean; onOpenC
           <div><Label>Descrição</Label><Textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} rows={4} placeholder="Descreva a tarefa..." /></div>
           <div><Label>Imagem de Capa</Label><FileUploadButton value={capa} onChange={(v) => setCapa(v ?? "")} label="Fazer upload da imagem de capa" accept="image/*" /></div>
           <div><Label>Iframe do Vídeo</Label><Textarea value={iframe} onChange={(e) => setIframe(e.target.value)} rows={3} placeholder='<iframe src="..."></iframe>' /></div>
-          <div><Label>Materiais de Apoio</Label><FileUploadButton value={materiais} onChange={(v) => setMateriais(v ?? "")} label="Fazer upload dos materiais" accept="*/*" /></div>
+          <div><Label>Materiais de Apoio</Label><FileUploadButton value={materiais} onChange={(v) => setMateriais(v ?? "")} label="Fazer upload dos materiais" accept="*/*" multiple /></div>
         </div>
         <DialogFooter><Button variant="outline" onClick={close}>Cancelar</Button><Button className="bg-flame" onClick={submit}>Criar Tarefa</Button></DialogFooter>
       </DialogContent>

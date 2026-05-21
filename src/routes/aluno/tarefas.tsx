@@ -19,10 +19,12 @@ const cols: { key: Status; label: string }[] = [
 interface Row {
   id: string;
   titulo: string;
+  descricao: string | null;
   aula_numero: number;
   aula_titulo: string;
   status: Status;
 }
+
 
 function Page() {
   const { user, profile } = useAuth();
@@ -37,7 +39,7 @@ function Page() {
       const aulaMap = new Map((aulas ?? []).map((a) => [a.id, a]));
       const aulaIds = aulas?.map((a) => a.id) ?? [];
       if (!aulaIds.length) return [];
-      const { data: tarefas } = await supabase.from("tarefas").select("id, titulo, aula_id").in("aula_id", aulaIds);
+      const { data: tarefas } = await supabase.from("tarefas").select("id, titulo, descricao, aula_id").in("aula_id", aulaIds);
       const { data: statuses } = await supabase
         .from("aluno_tarefa_status")
         .select("tarefa_id, status")
@@ -48,10 +50,12 @@ function Page() {
         return {
           id: t.id,
           titulo: t.titulo,
+          descricao: t.descricao,
           aula_numero: a?.numero ?? 0,
           aula_titulo: a?.titulo ?? "",
           status: sm.get(t.id) ?? "a_fazer",
         } as Row;
+
       });
     },
     enabled: !!user && !!turmaId,
@@ -91,6 +95,8 @@ function Page() {
                   <Card key={r.id} className="space-y-2 border-border bg-card p-3">
                     <p className="text-xs text-muted-foreground">Aula {r.aula_numero} · {r.aula_titulo}</p>
                     <p className="text-sm font-medium">{r.titulo}</p>
+                    {r.descricao && <p className="line-clamp-3 text-xs text-muted-foreground">{r.descricao}</p>}
+
                     <Select value={r.status} onValueChange={(v) => mut.mutate({ tarefa_id: r.id, status: v as Status })}>
                       <SelectTrigger className="h-8 bg-secondary text-xs"><SelectValue /></SelectTrigger>
                       <SelectContent>

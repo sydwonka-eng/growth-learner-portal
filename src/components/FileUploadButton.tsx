@@ -10,24 +10,52 @@ interface Props {
   label: string;
   accept?: string;
   bucket?: string;
+  multiple?: boolean;
 }
 
-export function FileUploadButton({ value, onChange, label, accept = "image/*", bucket = "aulas-capas" }: Props) {
+export function FileUploadButton({ value, onChange, label, accept = "image/*", bucket = "aulas-capas", multiple = false }: Props) {
   const ref = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
 
-  const handle = async (file: File) => {
-    setLoading(true);
-    const path = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
+  const urls = value ? value.split("\n").filter(Boolean) : [];
+
+  const uploadOne = async (file: File) => {
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
     const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: false });
     if (error) {
       toast.error(error.message);
+      return null;
+    }
+    const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+    return data.publicUrl;
+  };
+
+  const handle = async (files: FileList) => {
+    setLoading(true);
+    if (multiple) {
+      const uploaded: string[] = [];
+      for (const f of Array.from(files)) {
+        const u = await uploadOne(f);
+        if (u) uploaded.push(u);
+      }
+      if (uploaded.length) {
+        onChange([...urls, ...uploaded].join("\n"));
+        toast.success(`${uploaded.length} arquivo(s) enviado(s)`);
+      }
     } else {
-      const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-      onChange(data.publicUrl);
-      toast.success("Upload concluído");
+      const u = await uploadOne(files[0]);
+      if (u) {
+        onChange(u);
+        toast.success("Upload concluído");
+      }
     }
     setLoading(false);
+    if (ref.current) ref.current.value = "";
+  };
+
+  const removeOne = (u: string) => {
+    const next = urls.filter((x) => x !== u);
+    onChange(next.length ? next.join("\n") : null);
   };
 
   return (
@@ -36,18 +64,24 @@ export function FileUploadButton({ value, onChange, label, accept = "image/*", b
         ref={ref}
         type="file"
         accept={accept}
+        multiple={multiple}
         className="hidden"
-        onChange={(e) => e.target.files?.[0] && handle(e.target.files[0])}
+        onChange={(e) => e.target.files?.length && handle(e.target.files)}
       />
-      {value ? (
-        <div className="flex items-center gap-2 rounded-md border border-border bg-secondary/40 p-2">
-          {accept.startsWith("image") && <img src={value} alt="preview" className="h-10 w-16 rounded object-cover" />}
-          <span className="flex-1 truncate text-xs text-muted-foreground">{value.split("/").pop()}</span>
-          <button type="button" onClick={() => onChange(null)} className="text-muted-foreground hover:text-destructive">
-            <X className="h-4 w-4" />
-          </button>
+      {urls.length > 0 && (
+        <div className="space-y-1">
+          {urls.map((u) => (
+            <div key={u} className="flex items-center gap-2 rounded-md border border-border bg-secondary/40 p-2">
+              {accept.startsWith("image") && <img src={u} alt="preview" className="h-10 w-16 rounded object-cover" />}
+              <span className="flex-1 truncate text-xs text-muted-foreground">{u.split("/").pop()}</span>
+              <button type="button" onClick={() => removeOne(u)} className="text-muted-foreground hover:text-destructive">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          ))}
         </div>
-      ) : (
+      )}
+      {(multiple || urls.length === 0) && (
         <Button type="button" variant="outline" className="w-full" disabled={loading} onClick={() => ref.current?.click()}>
           {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
           {label}
