@@ -41,37 +41,57 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const apply = async (s: Session | null) => {
+    setLoading(true);
     setSession(s);
     setUser(s?.user ?? null);
     if (s?.user) {
-      const { profile, role } = await loadExtras(s.user.id);
-      setProfile(profile);
-      setRole(role);
+      try {
+        const { profile, role } = await loadExtras(s.user.id);
+        setProfile(profile);
+        setRole(role);
+      } catch (error) {
+        console.error("Erro ao carregar perfil e papel do usuário", error);
+        setProfile(null);
+        setRole(null);
+      } finally {
+        setLoading(false);
+      }
     } else {
       setProfile(null);
       setRole(null);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
-      // defer extras to avoid deadlock
+      setLoading(true);
       setSession(s);
       setUser(s?.user ?? null);
       if (s?.user) {
         setTimeout(() => {
-          loadExtras(s.user.id).then(({ profile, role }) => {
-            setProfile(profile);
-            setRole(role);
-          });
+          loadExtras(s.user.id)
+            .then(({ profile, role }) => {
+              setProfile(profile);
+              setRole(role);
+            })
+            .catch((error) => {
+              console.error("Erro ao atualizar perfil e papel do usuário", error);
+              setProfile(null);
+              setRole(null);
+            })
+            .finally(() => {
+              setLoading(false);
+            });
         }, 0);
       } else {
         setProfile(null);
         setRole(null);
+        setLoading(false);
       }
     });
     supabase.auth.getSession().then(({ data }) => {
-      apply(data.session).finally(() => setLoading(false));
+      void apply(data.session);
     });
     return () => subscription.unsubscribe();
   }, []);
