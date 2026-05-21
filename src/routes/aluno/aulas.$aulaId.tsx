@@ -11,8 +11,8 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/aluno/aulas/$aulaId")({ component: Page });
 
 type Status = "a_fazer" | "em_andamento" | "concluida";
-interface Aula { id: string; numero: number; titulo: string; descricao: string | null; iframe_video: string | null; materiais_url: string | null }
-interface Tarefa { id: string; titulo: string; descricao: string | null }
+interface Aula { id: string; numero: number; titulo: string; descricao: string | null; iframe_video: string | null; capa_url: string | null; materiais_url: string | null }
+interface Tarefa { id: string; titulo: string; descricao: string | null; capa_url: string | null; iframe_video: string | null; materiais_url: string | null }
 
 const statusLabel: Record<Status, string> = {
   a_fazer: "A fazer",
@@ -28,7 +28,7 @@ function Page() {
   const { data: aula } = useQuery({
     queryKey: ["aluno-aula", aulaId],
     queryFn: async () => {
-      const { data, error } = await supabase.from("aulas").select("id, numero, titulo, descricao, iframe_video, materiais_url").eq("id", aulaId).single();
+      const { data, error } = await supabase.from("aulas").select("id, numero, titulo, descricao, iframe_video, capa_url, materiais_url").eq("id", aulaId).single();
       if (error) throw error;
       return data as Aula;
     },
@@ -37,7 +37,7 @@ function Page() {
   const { data: tarefas = [] } = useQuery({
     queryKey: ["aluno-tarefas", aulaId],
     queryFn: async () => {
-      const { data, error } = await supabase.from("tarefas").select("id, titulo, descricao").eq("aula_id", aulaId);
+      const { data, error } = await supabase.from("tarefas").select("id, titulo, descricao, capa_url, iframe_video, materiais_url").eq("aula_id", aulaId);
       if (error) throw error;
       return data as Tarefa[];
     },
