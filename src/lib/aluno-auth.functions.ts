@@ -9,25 +9,57 @@ export const loginAlunoByEmail = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const email = data.email.toLowerCase();
 
-    // Buscar profile aprovado
-    const { data: profile, error: pErr } = await supabaseAdmin
+    // Buscar profile
+    let { data: profile } = await supabaseAdmin
       .from("profiles")
       .select("id, approved")
       .eq("email", email)
       .maybeSingle();
 
-    if (pErr) throw new Error("Erro ao consultar cadastro");
-    if (!profile) throw new Error("Email não cadastrado. Faça seu cadastro primeiro.");
+    // Se não existe profile, checar acesso vitalício
+    if (!profile) {
+      const { data: vit } = await supabaseAdmin
+        .from("acessos_vitalicios")
+        .select("email, nome, telefone, turma_id")
+        .ilike("email", email)
+        .maybeSingle();
+
+      if (!vit) throw new Error("Email não cadastrado. Solicite acesso ao mentor.");
+
+      // Criar usuário no auth + profile + role aluno
+      const { data: created, error: cErr } =
+        await supabaseAdmin.auth.admin.createUser({
+          email,
+          email_confirm: true,
+          user_metadata: { nome: vit.nome ?? email },
+        });
+      if (cErr || !created?.user) throw new Error("Erro ao criar acesso do aluno.");
+
+      const uid = created.user.id;
+      await supabaseAdmin.from("profiles").upsert({
+        id: uid,
+        email,
+        nome: vit.nome ?? email,
+        telefone: vit.telefone,
+        turma_id: vit.turma_id,
+        approved: true,
+      });
+      await supabaseAdmin.from("user_roles").upsert({ user_id: uid, role: "aluno" });
+      profile = { id: uid, approved: true };
+    }
+
     if (!profile.approved)
       throw new Error("Seu cadastro ainda não foi aprovado pelo mentor.");
 
-    // Verificar role aluno
+    // Garantir role aluno
     const { data: roles } = await supabaseAdmin
       .from("user_roles")
       .select("role")
       .eq("user_id", profile.id);
     const isAluno = roles?.some((r) => r.role === "aluno");
-    if (!isAluno) throw new Error("Este email não está cadastrado como aluno.");
+    if (!isAluno) {
+      await supabaseAdmin.from("user_roles").upsert({ user_id: profile.id, role: "aluno" });
+    }
 
     // Gerar magic link
     const { data: link, error: lErr } =
