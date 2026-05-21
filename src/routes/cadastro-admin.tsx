@@ -31,10 +31,25 @@ function Page() {
       toast.error(error.message);
       return;
     }
-    if (data.user) {
-      // marca como admin + aprovado
-      await supabase.from("user_roles").insert({ user_id: data.user.id, role: "admin" });
-      await supabase.from("profiles").update({ nome, approved: true }).eq("id", data.user.id);
+    // Garante sessão (caso auto-confirm esteja ligado já vem logado; senão tenta login)
+    let session = (await supabase.auth.getSession()).data.session;
+    if (!session) {
+      const { data: signIn } = await supabase.auth.signInWithPassword({ email, password });
+      session = signIn.session;
+    }
+    if (session) {
+      await supabase.from("profiles").update({ nome }).eq("id", session.user.id);
+      const { error: rpcErr } = await supabase.rpc("claim_admin");
+      if (rpcErr) {
+        setLoading(false);
+        toast.error("Erro ao ativar admin: " + rpcErr.message);
+        return;
+      }
+    } else {
+      setLoading(false);
+      toast.info("Confirme seu email e faça login para ativar.");
+      navigate({ to: "/login-admin" });
+      return;
     }
     setLoading(false);
     toast.success("Conta criada!");
