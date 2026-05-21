@@ -95,9 +95,12 @@ function NovoDialog({ open, onOpenChange, turmaId, initialDate }: { open: boolea
   const [data, setData] = useState(initialDate ? format(initialDate, "yyyy-MM-dd") : format(new Date(), "yyyy-MM-dd"));
   const [hora, setHora] = useState("19:00");
   const submit = async () => {
-    if (!turmaId || !titulo) return toast.error("Preencha os campos");
+    if (!turmaId) return toast.error("Selecione uma turma no topo da página antes de criar um compromisso");
+    if (!titulo.trim()) return toast.error("Informe o título do compromisso");
+    if (!data || !hora) return toast.error("Informe a data e o horário");
     const dt = new Date(`${data}T${hora}`);
-    const { error } = await supabase.from("compromissos").insert({ turma_id: turmaId, titulo, descricao, data_hora: dt.toISOString() });
+    if (isNaN(dt.getTime())) return toast.error("Data/horário inválido");
+    const { error } = await supabase.from("compromissos").insert({ turma_id: turmaId, titulo: titulo.trim(), descricao: descricao || null, data_hora: dt.toISOString() });
     if (error) return toast.error(error.message);
     toast.success("Compromisso criado");
     qc.invalidateQueries({ queryKey: ["compromissos"] });

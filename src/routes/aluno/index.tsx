@@ -14,6 +14,7 @@ interface Aula {
   numero: number;
   titulo: string;
   descricao: string | null;
+  card_image_url: string | null;
   capa_url: string | null;
   liberada: boolean;
 }
@@ -27,7 +28,7 @@ function Page() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("aulas")
-        .select("id, numero, titulo, descricao, capa_url, liberada")
+        .select("id, numero, titulo, descricao, card_image_url, capa_url, liberada")
         .eq("turma_id", turmaId!)
         .order("numero");
       if (error) throw error;
@@ -44,9 +45,10 @@ function Page() {
       ) : aulas.length === 0 ? (
         <p className="text-sm text-muted-foreground">Nenhuma aula disponível ainda.</p>
       ) : (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
           {aulas.map((aula) => {
             const locked = !aula.liberada;
+            const img = aula.card_image_url ?? aula.capa_url;
             const inner = (
               <Card
                 className={cn(
@@ -54,9 +56,9 @@ function Page() {
                   locked ? "opacity-60" : "hover:border-primary hover:glow hover:-translate-y-0.5",
                 )}
               >
-                <div className="relative aspect-video w-full overflow-hidden bg-secondary">
-                  {aula.capa_url ? (
-                    <img src={aula.capa_url} alt={aula.titulo} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
+                <div className="relative aspect-[3/4] w-full overflow-hidden bg-secondary">
+                  {img ? (
+                    <img src={img} alt={aula.titulo} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-flame">
                       <span className="text-3xl font-bold text-primary-foreground">{aula.numero}</span>
