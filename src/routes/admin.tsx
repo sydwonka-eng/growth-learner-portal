@@ -66,9 +66,9 @@ function Layout() {
     }
   }, [turmas, selected]);
 
-  const onSel = (id: string) => {
+  const onSel = (id: string | null) => {
     setSelected(id);
-    localStorage.setItem("admin-turma", id);
+    if (id) localStorage.setItem("admin-turma", id);
   };
 
   if (loading || role !== "admin") return null;
