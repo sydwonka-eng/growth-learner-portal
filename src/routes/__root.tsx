@@ -1,6 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
-  Link,
   Outlet,
   createRootRouteWithContext,
   useRouter,
@@ -21,12 +20,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Tríade da Ação" },
       { name: "description", content: "Plataforma de mentoria Tríade da Ação." },
+      { property: "og:title", content: "Tríade da Ação" },
+      { name: "twitter:title", content: "Tríade da Ação" },
+      { property: "og:description", content: "Plataforma de mentoria Tríade da Ação." },
+      { name: "twitter:description", content: "Plataforma de mentoria Tríade da Ação." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/0a85b80c-fc94-4ead-bd7a-e8174635924d/id-preview-4f15bedb--6a2e995c-1e16-4dc6-95ee-2e32f46a023f.lovable.app-1779324369125.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/0a85b80c-fc94-4ead-bd7a-e8174635924d/id-preview-4f15bedb--6a2e995c-1e16-4dc6-95ee-2e32f46a023f.lovable.app-1779324369125.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:type", content: "website" },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),
   shellComponent: RootShell,
   component: RootComponent,
-  notFoundComponent: NotFoundPage,
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
@@ -62,32 +68,5 @@ function RootComponent() {
         <Toaster richColors position="top-center" />
       </AuthProvider>
     </QueryClientProvider>
-  );
-}
-
-function NotFoundPage() {
-  return (
-    <div className="flex min-h-screen items-center justify-center starfield px-4">
-      <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 text-center">
-        <h1 className="text-2xl font-bold">Página não encontrada</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          O endereço que você tentou abrir não existe ou foi movido.
-        </p>
-        <div className="mt-6 flex justify-center gap-3">
-          <Link
-            to="/login"
-            className="inline-flex items-center justify-center rounded-md bg-flame px-4 py-2 text-sm font-medium text-primary-foreground"
-          >
-            Ir para login
-          </Link>
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md border border-border px-4 py-2 text-sm font-medium"
-          >
-            Início
-          </Link>
-        </div>
-      </div>
-    </div>
   );
 }
