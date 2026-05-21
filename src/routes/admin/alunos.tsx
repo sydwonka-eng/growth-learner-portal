@@ -159,6 +159,7 @@ function Table({ rows, turmas, onEdit }: { rows: Aluno[]; turmas: { id: string; 
                     <span className="font-medium">{a.nome}</span>
                   </div>
                 </td>
+                <td className="px-3 py-3 text-muted-foreground">{a.telefone ?? "—"}</td>
                 <td className="px-3 py-3">
                   {a.id.startsWith("vit-") ? (
                     <span className="text-muted-foreground">—</span>
