@@ -25,6 +25,7 @@ import { Route as AlunoAgendaRouteImport } from './routes/aluno/agenda'
 import { Route as AdminConteudosRouteImport } from './routes/admin/conteudos'
 import { Route as AdminAlunosRouteImport } from './routes/admin/alunos'
 import { Route as AdminAgendaRouteImport } from './routes/admin/agenda'
+import { Route as AdminAcessosRouteImport } from './routes/admin/acessos'
 import { Route as AlunoAulasAulaIdRouteImport } from './routes/aluno/aulas.$aulaId'
 
 const TarefasRoute = TarefasRouteImport.update({
@@ -107,6 +108,11 @@ const AdminAgendaRoute = AdminAgendaRouteImport.update({
   path: '/agenda',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAcessosRoute = AdminAcessosRouteImport.update({
+  id: '/acessos',
+  path: '/acessos',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AlunoAulasAulaIdRoute = AlunoAulasAulaIdRouteImport.update({
   id: '/aulas/$aulaId',
   path: '/aulas/$aulaId',
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/login-admin': typeof LoginAdminRoute
   '/tarefas': typeof TarefasRoute
+  '/admin/acessos': typeof AdminAcessosRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/alunos': typeof AdminAlunosRoute
   '/admin/conteudos': typeof AdminConteudosRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/login-admin': typeof LoginAdminRoute
   '/tarefas': typeof TarefasRoute
+  '/admin/acessos': typeof AdminAcessosRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/alunos': typeof AdminAlunosRoute
   '/admin/conteudos': typeof AdminConteudosRoute
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/login-admin': typeof LoginAdminRoute
   '/tarefas': typeof TarefasRoute
+  '/admin/acessos': typeof AdminAcessosRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/alunos': typeof AdminAlunosRoute
   '/admin/conteudos': typeof AdminConteudosRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/login-admin'
     | '/tarefas'
+    | '/admin/acessos'
     | '/admin/agenda'
     | '/admin/alunos'
     | '/admin/conteudos'
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/login-admin'
     | '/tarefas'
+    | '/admin/acessos'
     | '/admin/agenda'
     | '/admin/alunos'
     | '/admin/conteudos'
@@ -217,6 +228,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/login-admin'
     | '/tarefas'
+    | '/admin/acessos'
     | '/admin/agenda'
     | '/admin/alunos'
     | '/admin/conteudos'
@@ -353,6 +365,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAgendaRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/acessos': {
+      id: '/admin/acessos'
+      path: '/acessos'
+      fullPath: '/admin/acessos'
+      preLoaderRoute: typeof AdminAcessosRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/aluno/aulas/$aulaId': {
       id: '/aluno/aulas/$aulaId'
       path: '/aulas/$aulaId'
@@ -364,6 +383,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminAcessosRoute: typeof AdminAcessosRoute
   AdminAgendaRoute: typeof AdminAgendaRoute
   AdminAlunosRoute: typeof AdminAlunosRoute
   AdminConteudosRoute: typeof AdminConteudosRoute
@@ -371,6 +391,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAcessosRoute: AdminAcessosRoute,
   AdminAgendaRoute: AdminAgendaRoute,
   AdminAlunosRoute: AdminAlunosRoute,
   AdminConteudosRoute: AdminConteudosRoute,
@@ -409,3 +430,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
