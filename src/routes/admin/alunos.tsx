@@ -41,12 +41,32 @@ function Page() {
     },
   });
 
+  const { data: vitalicios = [] } = useQuery({
+    queryKey: ["acessos-vitalicios"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("acessos_vitalicios").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as { id: string; email: string; nome: string | null; telefone: string | null; created_at: string }[];
+    },
+  });
+
   const pending = alunos.filter((a) => !a.approved);
   const approved = alunos.filter((a) => a.approved);
 
+  // Vitalícios que ainda não criaram conta aparecem como alunos virtuais
+  const emailsCadastrados = new Set(alunos.map((a) => a.email.toLowerCase()));
+  const vitaliciosVirtuais: Aluno[] = vitalicios
+    .filter((v) => !emailsCadastrados.has(v.email.toLowerCase()))
+    .map((v) => ({
+      id: `vit-${v.id}`, nome: v.nome ?? v.email, email: v.email, telefone: v.telefone,
+      turma_id: null, approved: true, created_at: v.created_at,
+    }));
+  const todos = [...approved, ...vitaliciosVirtuais];
+
   const tabs = [
-    { id: "todos", nome: `Todos (${approved.length})`, filter: () => approved },
-    { id: "sem", nome: `Sem Turma (${approved.filter((a) => !a.turma_id).length})`, filter: () => approved.filter((a) => !a.turma_id) },
+    { id: "todos", nome: `Todos (${todos.length})`, filter: () => todos },
+    { id: "sem", nome: `Sem Turma (${todos.filter((a) => !a.turma_id).length})`, filter: () => todos.filter((a) => !a.turma_id) },
+    { id: "vitalicio", nome: `Vitalícios (${vitaliciosVirtuais.length})`, filter: () => vitaliciosVirtuais },
     ...turmas.map((t: { id: string; nome: string }) => ({
       id: t.id, nome: `${t.nome} (${approved.filter((a) => a.turma_id === t.id).length})`,
       filter: () => approved.filter((a) => a.turma_id === t.id),
@@ -144,7 +164,7 @@ function Table({ rows, turmas, onEdit }: { rows: Aluno[]; turmas: { id: string; 
                 <td className="px-3 py-3 text-muted-foreground">{format(new Date(a.created_at), "dd 'de' MMM. 'de' yyyy", { locale: ptBR })}</td>
                 <td className="px-3 py-3"><div className="flex gap-1">
                   {a.telefone && <a href={`https://wa.me/55${a.telefone.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer" className="rounded p-1.5 text-emerald-400 hover:bg-secondary"><MessageCircle className="h-4 w-4" /></a>}
-                  <button onClick={() => onEdit(a)} className="rounded p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground"><Pencil className="h-4 w-4" /></button>
+                  {!a.id.startsWith("vit-") && <button onClick={() => onEdit(a)} className="rounded p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground"><Pencil className="h-4 w-4" /></button>}
                 </div></td>
               </tr>
             );

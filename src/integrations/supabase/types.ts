@@ -20,21 +20,27 @@ export type Database = {
           created_by: string | null
           email: string
           id: string
+          nome: string | null
           nota: string | null
+          telefone: string | null
         }
         Insert: {
           created_at?: string
           created_by?: string | null
           email: string
           id?: string
+          nome?: string | null
           nota?: string | null
+          telefone?: string | null
         }
         Update: {
           created_at?: string
           created_by?: string | null
           email?: string
           id?: string
+          nome?: string | null
           nota?: string | null
+          telefone?: string | null
         }
         Relationships: []
       }
@@ -73,6 +79,7 @@ export type Database = {
       aulas: {
         Row: {
           capa_url: string | null
+          card_image_url: string | null
           created_at: string
           descricao: string | null
           id: string
@@ -85,6 +92,7 @@ export type Database = {
         }
         Insert: {
           capa_url?: string | null
+          card_image_url?: string | null
           created_at?: string
           descricao?: string | null
           id?: string
@@ -97,6 +105,7 @@ export type Database = {
         }
         Update: {
           capa_url?: string | null
+          card_image_url?: string | null
           created_at?: string
           descricao?: string | null
           id?: string
@@ -193,23 +202,32 @@ export type Database = {
       tarefas: {
         Row: {
           aula_id: string
+          capa_url: string | null
           created_at: string
           descricao: string | null
           id: string
+          iframe_video: string | null
+          materiais_url: string | null
           titulo: string
         }
         Insert: {
           aula_id: string
+          capa_url?: string | null
           created_at?: string
           descricao?: string | null
           id?: string
+          iframe_video?: string | null
+          materiais_url?: string | null
           titulo: string
         }
         Update: {
           aula_id?: string
+          capa_url?: string | null
           created_at?: string
           descricao?: string | null
           id?: string
+          iframe_video?: string | null
+          materiais_url?: string | null
           titulo?: string
         }
         Relationships: [
