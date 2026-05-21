@@ -19,10 +19,12 @@ const cols: { key: Status; label: string }[] = [
 interface Row {
   id: string;
   titulo: string;
+  descricao: string | null;
   aula_numero: number;
   aula_titulo: string;
   status: Status;
 }
+
 
 function Page() {
   const { user, profile } = useAuth();
