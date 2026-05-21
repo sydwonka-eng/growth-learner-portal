@@ -1,8 +1,9 @@
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode, createContext, useContext } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { LayoutGrid, Users, BookOpen, Calendar, Plus } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { useAuth } from "@/hooks/use-auth";
+import { AdminTurmasProvider, type Turma } from "@/hooks/use-admin-turmas";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -11,20 +12,6 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-
-interface Turma { id: string; nome: string; community_link: string | null }
-interface TurmaCtx {
-  turmas: Turma[];
-  selected: string | null;
-  setSelected: (id: string | null) => void;
-  refetch: () => void;
-}
-const Ctx = createContext<TurmaCtx | undefined>(undefined);
-export const useTurmas = () => {
-  const c = useContext(Ctx);
-  if (!c) throw new Error("useTurmas inside admin");
-  return c;
-};
 
 export const Route = createFileRoute("/admin")({ component: Layout });
 
@@ -39,14 +26,20 @@ function Layout() {
   const { loading, role } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const [selected, setSelected] = useState<string | null>(
-    typeof window !== "undefined" ? localStorage.getItem("admin-turma") : null,
-  );
+  const [selected, setSelected] = useState<string | null>(null);
+  const [selectionReady, setSelectionReady] = useState(false);
   const [openNew, setOpenNew] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      setSelected(window.localStorage.getItem("admin-turma"));
+    }
+    setSelectionReady(true);
+  }, []);
+
+  useEffect(() => {
     if (loading) return;
-    if (role !== "admin") navigate({ to: "/login" });
+    if (role !== "admin") navigate({ to: "/login-admin" });
   }, [loading, role, navigate]);
 
   const { data: turmas = [], refetch } = useQuery({
@@ -60,21 +53,24 @@ function Layout() {
   });
 
   useEffect(() => {
+    if (!selectionReady) return;
     if (!selected && turmas.length) {
       setSelected(turmas[0].id);
-      localStorage.setItem("admin-turma", turmas[0].id);
+      window.localStorage.setItem("admin-turma", turmas[0].id);
     }
-  }, [turmas, selected]);
+  }, [turmas, selected, selectionReady]);
 
   const onSel = (id: string | null) => {
     setSelected(id);
-    if (id) localStorage.setItem("admin-turma", id);
+    if (typeof window !== "undefined" && id) {
+      window.localStorage.setItem("admin-turma", id);
+    }
   };
 
   if (loading || role !== "admin") return null;
 
   return (
-    <Ctx.Provider value={{ turmas, selected, setSelected: onSel, refetch }}>
+    <AdminTurmasProvider value={{ turmas, selected, setSelected: onSel, refetch }}>
       <AppShell nav={nav as never}>
         <div className="mx-auto max-w-7xl space-y-6 p-6 md:p-8">
           <div className="flex flex-wrap items-center justify-end gap-2">
@@ -92,7 +88,7 @@ function Layout() {
         </div>
       </AppShell>
       <NovaTurmaDialog open={openNew} onOpenChange={setOpenNew} onCreated={(id) => { refetch(); qc.invalidateQueries(); onSel(id); }} />
-    </Ctx.Provider>
+    </AdminTurmasProvider>
   );
 }
 

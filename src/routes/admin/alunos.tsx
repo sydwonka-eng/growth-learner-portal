@@ -11,8 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Pencil, MessageCircle, Check, X, Folder } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useTurmas } from "@/hooks/use-admin-turmas";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { useTurmas } from "@/routes/admin";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
@@ -47,7 +47,7 @@ function Page() {
   const tabs = [
     { id: "todos", nome: `Todos (${approved.length})`, filter: () => approved },
     { id: "sem", nome: `Sem Turma (${approved.filter((a) => !a.turma_id).length})`, filter: () => approved.filter((a) => !a.turma_id) },
-    ...turmas.map((t) => ({
+    ...turmas.map((t: { id: string; nome: string }) => ({
       id: t.id, nome: `${t.nome} (${approved.filter((a) => a.turma_id === t.id).length})`,
       filter: () => approved.filter((a) => a.turma_id === t.id),
     })),

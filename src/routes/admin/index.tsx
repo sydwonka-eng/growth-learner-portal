@@ -2,9 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Users, UserX, BookOpen, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { useTurmas } from "@/hooks/use-admin-turmas";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { useTurmas } from "@/routes/admin";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
