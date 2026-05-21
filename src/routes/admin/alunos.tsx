@@ -158,9 +158,30 @@ function Table({ rows, turmas, onEdit }: { rows: Aluno[]; turmas: { id: string; 
                     <span className="font-medium">{a.nome}</span>
                   </div>
                 </td>
-                <td className="px-3 py-3 text-muted-foreground">{a.telefone ?? "—"}</td>
-                <td className="px-3 py-3"><span className={turma ? "text-primary" : "text-muted-foreground"}>{turma?.nome ?? "Sem turma"}</span></td>
-                <td className="px-3 py-3 w-40"><div className="flex items-center gap-2"><Progress value={0} className="h-1.5" /><span className="text-xs text-muted-foreground">0%</span></div></td>
+                <td className="px-3 py-3">
+                  {a.id.startsWith("vit-") ? (
+                    <span className="text-muted-foreground">—</span>
+                  ) : (
+                    <Select
+                      value={a.turma_id ?? "none"}
+                      onValueChange={async (v) => {
+                        const novo = v === "none" ? null : v;
+                        const { error } = await supabase.from("profiles").update({ turma_id: novo }).eq("id", a.id);
+                        if (error) return toast.error(error.message);
+                        toast.success("Turma atualizada");
+                        qc.invalidateQueries({ queryKey: ["alunos-all"] });
+                      }}
+                    >
+                      <SelectTrigger className="h-8 w-[160px] bg-secondary/40 text-xs">
+                        <SelectValue placeholder="Sem turma" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Sem turma</SelectItem>
+                        {turmas.map((t) => <SelectItem key={t.id} value={t.id}>{t.nome}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </td>
                 <td className="px-3 py-3 text-muted-foreground">{format(new Date(a.created_at), "dd 'de' MMM. 'de' yyyy", { locale: ptBR })}</td>
                 <td className="px-3 py-3"><div className="flex gap-1">
                   {a.telefone && <a href={`https://wa.me/55${a.telefone.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer" className="rounded p-1.5 text-emerald-400 hover:bg-secondary"><MessageCircle className="h-4 w-4" /></a>}
