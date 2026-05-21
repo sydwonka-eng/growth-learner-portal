@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
-import { LayoutGrid, Users, BookOpen, Calendar, Plus } from "lucide-react";
+import { LayoutGrid, Users, BookOpen, Calendar, Plus, Infinity as InfinityIcon } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { useAuth } from "@/hooks/use-auth";
 import { AdminTurmasProvider, type Turma } from "@/hooks/use-admin-turmas";
@@ -20,6 +20,7 @@ const nav = [
   { to: "/admin/alunos", label: "Alunos", icon: <Users className="h-4 w-4" /> },
   { to: "/admin/conteudos", label: "Conteúdos", icon: <BookOpen className="h-4 w-4" /> },
   { to: "/admin/agenda", label: "Agenda", icon: <Calendar className="h-4 w-4" /> },
+  { to: "/admin/acessos", label: "Vitalícios", icon: <InfinityIcon className="h-4 w-4" /> },
 ];
 
 function Layout() {
