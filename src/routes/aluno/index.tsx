@@ -38,7 +38,7 @@ function Page() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Minhas Aulas" description="Acompanhe sua jornada da Tríade da Ação." />
+      <PageHeader title="Minhas Aulas" subtitle="Acompanhe sua jornada da Tríade da Ação." />
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Carregando...</p>
       ) : aulas.length === 0 ? (

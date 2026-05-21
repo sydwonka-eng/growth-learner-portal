@@ -37,7 +37,7 @@ function Page() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Agenda" description="Compromissos da sua turma." />
+      <PageHeader title="Agenda" subtitle="Compromissos da sua turma." />
 
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Próximos</h2>

@@ -75,7 +75,7 @@ function Page() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Minhas Tarefas" description="Organize sua jornada em três etapas." />
+      <PageHeader title="Minhas Tarefas" subtitle="Organize sua jornada em três etapas." />
       <div className="grid gap-4 md:grid-cols-3">
         {cols.map((c) => {
           const items = rows.filter((r) => r.status === c.key);
