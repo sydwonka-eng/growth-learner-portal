@@ -5,8 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Plus, Trash2, Infinity as InfinityIcon } from "lucide-react";
+import { Plus, Trash2, Infinity as InfinityIcon, MessageCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { format } from "date-fns";
@@ -15,11 +14,13 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/acessos")({ component: Page });
 
-interface Acesso { id: string; email: string; nota: string | null; created_at: string }
+interface Acesso { id: string; email: string; nome: string | null; telefone: string | null; nota: string | null; created_at: string }
 
 function Page() {
   const qc = useQueryClient();
+  const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
   const [nota, setNota] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -34,19 +35,27 @@ function Page() {
 
   const add = async () => {
     if (!email.includes("@")) return toast.error("Email inválido");
+    if (!nome.trim()) return toast.error("Informe o nome do aluno");
     setLoading(true);
-    const { error } = await supabase.from("acessos_vitalicios").insert({ email: email.toLowerCase().trim(), nota: nota || null });
+    const { error } = await supabase.from("acessos_vitalicios").insert({
+      email: email.toLowerCase().trim(),
+      nome: nome.trim(),
+      telefone: telefone.trim() || null,
+      nota: nota || null,
+    });
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Acesso vitalício liberado");
-    setEmail(""); setNota("");
+    setNome(""); setEmail(""); setTelefone(""); setNota("");
     qc.invalidateQueries({ queryKey: ["acessos-vitalicios"] });
+    qc.invalidateQueries({ queryKey: ["alunos-all"] });
   };
 
   const remover = async (id: string) => {
     if (!confirm("Revogar este acesso?")) return;
     await supabase.from("acessos_vitalicios").delete().eq("id", id);
     qc.invalidateQueries({ queryKey: ["acessos-vitalicios"] });
+    qc.invalidateQueries({ queryKey: ["alunos-all"] });
   };
 
   return (
@@ -55,10 +64,14 @@ function Page() {
 
       <Card className="border-border bg-card p-5">
         <h3 className="mb-3 font-semibold">Liberar novo acesso</h3>
-        <div className="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-          <div><Label>Email do aluno</Label><Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="aluno@email.com" /></div>
+        <div className="grid gap-3 md:grid-cols-2">
+          <div><Label>Nome do aluno *</Label><Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="João Silva" /></div>
+          <div><Label>Email *</Label><Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="aluno@email.com" /></div>
+          <div><Label>Telefone (WhatsApp)</Label><Input value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="11999999999" /></div>
           <div><Label>Nota (opcional)</Label><Input value={nota} onChange={(e) => setNota(e.target.value)} placeholder="Ex: aluno bolsista" /></div>
-          <div className="flex items-end"><Button className="bg-flame" disabled={loading || !email} onClick={add}><Plus className="mr-1 h-4 w-4" /> Liberar</Button></div>
+        </div>
+        <div className="mt-3 flex justify-end">
+          <Button className="bg-flame" disabled={loading || !email || !nome} onClick={add}><Plus className="mr-1 h-4 w-4" /> Liberar acesso</Button>
         </div>
       </Card>
 
@@ -76,12 +89,17 @@ function Page() {
                   <InfinityIcon className="h-4 w-4" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium">{a.email}</div>
+                  <div className="font-medium">{a.nome ?? a.email}</div>
                   <div className="text-xs text-muted-foreground">
-                    {a.nota && <>{a.nota} • </>}
-                    Desde {format(new Date(a.created_at), "dd 'de' MMM. yyyy", { locale: ptBR })}
+                    {a.email}{a.telefone && <> • {a.telefone}</>}{a.nota && <> • {a.nota}</>}
                   </div>
+                  <div className="text-xs text-muted-foreground">Desde {format(new Date(a.created_at), "dd 'de' MMM. yyyy", { locale: ptBR })}</div>
                 </div>
+                {a.telefone && (
+                  <a href={`https://wa.me/55${a.telefone.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer" className="rounded p-2 text-emerald-400 hover:bg-secondary">
+                    <MessageCircle className="h-4 w-4" />
+                  </a>
+                )}
                 <button onClick={() => remover(a.id)} className="rounded p-2 text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
               </div>
             ))}
