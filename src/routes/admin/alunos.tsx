@@ -46,7 +46,7 @@ function Page() {
     queryFn: async () => {
       const { data, error } = await supabase.from("acessos_vitalicios").select("*").order("created_at", { ascending: false });
       if (error) throw error;
-      return data as { id: string; email: string; nome: string | null; telefone: string | null; created_at: string }[];
+      return data as { id: string; email: string; nome: string | null; telefone: string | null; turma_id: string | null; created_at: string }[];
     },
   });
 
@@ -59,7 +59,7 @@ function Page() {
     .filter((v) => !emailsCadastrados.has(v.email.toLowerCase()))
     .map((v) => ({
       id: `vit-${v.id}`, nome: v.nome ?? v.email, email: v.email, telefone: v.telefone,
-      turma_id: null, approved: true, created_at: v.created_at,
+      turma_id: v.turma_id, approved: true, created_at: v.created_at,
     }));
   const todos = [...approved, ...vitaliciosVirtuais];
 
