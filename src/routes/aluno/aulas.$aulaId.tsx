@@ -84,6 +84,12 @@ function Page() {
         <Link to="/aluno"><ArrowLeft className="mr-1 h-4 w-4" /> Voltar para aulas</Link>
       </Button>
 
+      {aula?.capa_url && (
+        <Card className="overflow-hidden border-border bg-card">
+          <img src={aula.capa_url} alt={aula.titulo} className="aspect-video w-full object-cover" />
+        </Card>
+      )}
+
       <div>
         <p className="text-sm text-muted-foreground">Aula {aula?.numero}</p>
         <h1 className="text-2xl font-bold md:text-3xl">{aula?.titulo}</h1>
@@ -109,27 +115,42 @@ function Page() {
         {tarefas.length === 0 ? (
           <p className="text-sm text-muted-foreground">Nenhuma tarefa para esta aula.</p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {tarefas.map((t) => {
               const cur = statusFor(t.id);
               const Icon = cur === "concluida" ? CheckCircle2 : cur === "em_andamento" ? Clock : Circle;
               return (
-                <Card key={t.id} className="flex flex-col gap-3 border-border bg-card p-4 md:flex-row md:items-center md:justify-between">
-                  <div className="flex items-start gap-3">
-                    <Icon className={cur === "concluida" ? "h-5 w-5 text-success" : cur === "em_andamento" ? "h-5 w-5 text-warning" : "h-5 w-5 text-muted-foreground"} />
-                    <div>
-                      <p className="font-medium">{t.titulo}</p>
-                      {t.descricao && <p className="text-sm text-muted-foreground">{t.descricao}</p>}
+                <Card key={t.id} className="overflow-hidden border-border bg-card">
+                  {t.capa_url && <img src={t.capa_url} alt={t.titulo} className="aspect-video w-full object-cover" />}
+                  <div className="space-y-3 p-4">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                      <div className="flex items-start gap-3">
+                        <Icon className={cur === "concluida" ? "h-5 w-5 text-success" : cur === "em_andamento" ? "h-5 w-5 text-warning" : "h-5 w-5 text-muted-foreground"} />
+                        <div>
+                          <p className="font-medium">{t.titulo}</p>
+                          {t.descricao && <p className="text-sm text-muted-foreground">{t.descricao}</p>}
+                        </div>
+                      </div>
+                      <Select value={cur} onValueChange={(v) => setStatusMut.mutate({ tarefa_id: t.id, status: v as Status })}>
+                        <SelectTrigger className="w-[160px] bg-secondary"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {(Object.keys(statusLabel) as Status[]).map((s) => (
+                            <SelectItem key={s} value={s}>{statusLabel[s]}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
+                    {t.iframe_video && (
+                      <div className="aspect-video w-full overflow-hidden rounded-md [&>iframe]:h-full [&>iframe]:w-full" dangerouslySetInnerHTML={{ __html: t.iframe_video }} />
+                    )}
+                    {t.materiais_url && (
+                      <Button asChild variant="outline" size="sm">
+                        <a href={t.materiais_url} target="_blank" rel="noreferrer">
+                          <FileText className="mr-2 h-4 w-4" /> Materiais da tarefa
+                        </a>
+                      </Button>
+                    )}
                   </div>
-                  <Select value={cur} onValueChange={(v) => setStatusMut.mutate({ tarefa_id: t.id, status: v as Status })}>
-                    <SelectTrigger className="w-[160px] bg-secondary"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {(Object.keys(statusLabel) as Status[]).map((s) => (
-                        <SelectItem key={s} value={s}>{statusLabel[s]}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                 </Card>
               );
             })}
