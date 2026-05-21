@@ -150,7 +150,6 @@ function Table({ rows, turmas, onEdit }: { rows: Aluno[]; turmas: { id: string; 
         </tr></thead>
         <tbody>
           {rows.map((a) => {
-            const turma = turmas.find((t) => t.id === a.turma_id);
             return (
               <tr key={a.id} className="border-b border-border/50 hover:bg-secondary/40">
                 <td className="px-3 py-3">
