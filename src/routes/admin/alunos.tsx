@@ -139,6 +139,7 @@ function PendingRow({ aluno, onChanged }: { aluno: Aluno; onChanged: () => void 
 }
 
 function Table({ rows, turmas, onEdit }: { rows: Aluno[]; turmas: { id: string; nome: string }[]; onEdit: (a: Aluno) => void }) {
+  const qc = useQueryClient();
   if (!rows.length) return <p className="py-10 text-center text-sm text-muted-foreground">Nenhum aluno aqui ainda.</p>;
   return (
     <div className="overflow-x-auto">
