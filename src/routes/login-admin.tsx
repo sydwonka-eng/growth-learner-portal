@@ -19,14 +19,31 @@ function Page() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
+    const { data: signIn, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
+      setLoading(false);
       toast.error(error.message);
       return;
     }
+    const uid = signIn.user?.id;
+    if (uid) {
+      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+      const isAdmin = roles?.some((r) => r.role === "admin");
+      if (!isAdmin) {
+        const { error: rpcErr } = await supabase.rpc("claim_admin");
+        if (rpcErr) {
+          setLoading(false);
+          toast.error("Erro ao ativar admin: " + rpcErr.message);
+          return;
+        }
+      } else {
+        await supabase.from("profiles").update({ approved: true }).eq("id", uid);
+      }
+    }
+    setLoading(false);
     toast.success("Bem-vindo!");
     navigate({ to: "/admin" });
+    setTimeout(() => window.location.reload(), 100);
   };
 
   return (
