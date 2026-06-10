@@ -21,7 +21,7 @@ export const Route = createFileRoute("/admin/alunos")({ component: Page });
 
 interface Aluno {
   id: string; nome: string; email: string; telefone: string | null;
-  turma_id: string | null; approved: boolean; created_at: string;
+  turma_id: string | null; approved: boolean; created_at: string; pontuacao: number;
 }
 
 function Page() {
