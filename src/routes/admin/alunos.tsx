@@ -146,7 +146,7 @@ function Table({ rows, turmas, onEdit }: { rows: Aluno[]; turmas: { id: string; 
       <table className="w-full text-sm">
         <thead><tr className="border-b border-border text-left text-xs text-muted-foreground">
           <th className="px-3 py-2">Nome</th><th className="px-3 py-2">Telefone</th><th className="px-3 py-2">Turma</th>
-          <th className="px-3 py-2">Progresso</th><th className="px-3 py-2">Cadastro</th><th className="px-3 py-2">Ações</th>
+          <th className="px-3 py-2">Pontuação</th><th className="px-3 py-2">Progresso</th><th className="px-3 py-2">Cadastro</th><th className="px-3 py-2">Ações</th>
         </tr></thead>
         <tbody>
           {rows.map((a) => {
