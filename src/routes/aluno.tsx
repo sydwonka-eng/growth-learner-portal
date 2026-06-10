@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { BookOpen, KanbanSquare, Calendar } from "lucide-react";
+import { BookOpen, KanbanSquare, Calendar, Trophy } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { useAuth } from "@/hooks/use-auth";
 
