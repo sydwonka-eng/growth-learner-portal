@@ -199,6 +199,49 @@ function Table({ rows, turmas, onEdit }: { rows: Aluno[]; turmas: { id: string; 
   );
 }
 
+function PointsCell({ aluno }: { aluno: Aluno }) {
+  const qc = useQueryClient();
+  const [val, setVal] = useState(String(aluno.pontuacao ?? 0));
+  const [saving, setSaving] = useState(false);
+  const dirty = val !== String(aluno.pontuacao ?? 0);
+  const save = async () => {
+    const pontos = Math.max(0, parseInt(val || "0", 10) || 0);
+    setSaving(true);
+    const isVit = aluno.id.startsWith("vit-");
+    const { error } = isVit
+      ? await supabase.from("acessos_vitalicios").update({ pontuacao: pontos }).eq("id", aluno.id.replace("vit-", ""))
+      : await supabase.from("profiles").update({ pontuacao: pontos }).eq("id", aluno.id);
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    setVal(String(pontos));
+    toast.success("Pontuação atualizada");
+    qc.invalidateQueries({ queryKey: ["alunos-all"] });
+    qc.invalidateQueries({ queryKey: ["acessos-vitalicios"] });
+    qc.invalidateQueries({ queryKey: ["ranking"] });
+  };
+  return (
+    <div className="flex items-center gap-1">
+      <div className="relative">
+        <Trophy className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-flame" />
+        <Input
+          type="number"
+          min={0}
+          value={val}
+          onChange={(e) => setVal(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") save(); }}
+          className="h-8 w-24 bg-secondary/40 pl-7 text-xs"
+        />
+      </div>
+      {dirty && (
+        <Button size="sm" className="h-8 bg-flame px-2" disabled={saving} onClick={save}>
+          <Check className="h-3.5 w-3.5" />
+        </Button>
+      )}
+    </div>
+  );
+}
+
+
 function EditAlunoDialog({ aluno, turmas, onClose, onSaved }: { aluno: Aluno | null; turmas: { id: string; nome: string }[]; onClose: () => void; onSaved: () => void }) {
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
