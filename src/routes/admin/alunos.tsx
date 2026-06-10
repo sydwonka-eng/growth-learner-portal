@@ -59,7 +59,7 @@ function Page() {
     .filter((v) => !emailsCadastrados.has(v.email.toLowerCase()))
     .map((v) => ({
       id: `vit-${v.id}`, nome: v.nome ?? v.email, email: v.email, telefone: v.telefone,
-      turma_id: v.turma_id, approved: true, created_at: v.created_at,
+      turma_id: v.turma_id, approved: true, created_at: v.created_at, pontuacao: v.pontuacao ?? 0,
     }));
   const todos = [...approved, ...vitaliciosVirtuais];
 
