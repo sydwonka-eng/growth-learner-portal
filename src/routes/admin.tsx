@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
-import { LayoutGrid, Users, BookOpen, Calendar, Plus, Infinity as InfinityIcon } from "lucide-react";
+import { LayoutGrid, Users, BookOpen, Calendar, Plus, Infinity as InfinityIcon, Trophy } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { useAuth } from "@/hooks/use-auth";
 import { AdminTurmasProvider, type Turma } from "@/hooks/use-admin-turmas";
