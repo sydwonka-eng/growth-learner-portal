@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { Pencil, MessageCircle, Check, X, Folder } from "lucide-react";
+import { Pencil, MessageCircle, Check, X, Folder, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTurmas } from "@/hooks/use-admin-turmas";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/admin/alunos")({ component: Page });
 
 interface Aluno {
   id: string; nome: string; email: string; telefone: string | null;
-  turma_id: string | null; approved: boolean; created_at: string;
+  turma_id: string | null; approved: boolean; created_at: string; pontuacao: number;
 }
 
 function Page() {
@@ -46,7 +46,7 @@ function Page() {
     queryFn: async () => {
       const { data, error } = await supabase.from("acessos_vitalicios").select("*").order("created_at", { ascending: false });
       if (error) throw error;
-      return data as { id: string; email: string; nome: string | null; telefone: string | null; turma_id: string | null; created_at: string }[];
+      return data as { id: string; email: string; nome: string | null; telefone: string | null; turma_id: string | null; created_at: string; pontuacao: number }[];
     },
   });
 
@@ -59,7 +59,7 @@ function Page() {
     .filter((v) => !emailsCadastrados.has(v.email.toLowerCase()))
     .map((v) => ({
       id: `vit-${v.id}`, nome: v.nome ?? v.email, email: v.email, telefone: v.telefone,
-      turma_id: v.turma_id, approved: true, created_at: v.created_at,
+      turma_id: v.turma_id, approved: true, created_at: v.created_at, pontuacao: v.pontuacao ?? 0,
     }));
   const todos = [...approved, ...vitaliciosVirtuais];
 
@@ -146,7 +146,7 @@ function Table({ rows, turmas, onEdit }: { rows: Aluno[]; turmas: { id: string; 
       <table className="w-full text-sm">
         <thead><tr className="border-b border-border text-left text-xs text-muted-foreground">
           <th className="px-3 py-2">Nome</th><th className="px-3 py-2">Telefone</th><th className="px-3 py-2">Turma</th>
-          <th className="px-3 py-2">Progresso</th><th className="px-3 py-2">Cadastro</th><th className="px-3 py-2">Ações</th>
+          <th className="px-3 py-2">Pontuação</th><th className="px-3 py-2">Progresso</th><th className="px-3 py-2">Cadastro</th><th className="px-3 py-2">Ações</th>
         </tr></thead>
         <tbody>
           {rows.map((a) => {
@@ -183,6 +183,7 @@ function Table({ rows, turmas, onEdit }: { rows: Aluno[]; turmas: { id: string; 
                     </SelectContent>
                   </Select>
                 </td>
+                <td className="px-3 py-3"><PointsCell aluno={a} /></td>
                 <td className="px-3 py-3 w-40"><div className="flex items-center gap-2"><Progress value={0} className="h-1.5" /><span className="text-xs text-muted-foreground">0%</span></div></td>
                 <td className="px-3 py-3 text-muted-foreground">{format(new Date(a.created_at), "dd 'de' MMM. 'de' yyyy", { locale: ptBR })}</td>
                 <td className="px-3 py-3"><div className="flex gap-1">
@@ -197,6 +198,49 @@ function Table({ rows, turmas, onEdit }: { rows: Aluno[]; turmas: { id: string; 
     </div>
   );
 }
+
+function PointsCell({ aluno }: { aluno: Aluno }) {
+  const qc = useQueryClient();
+  const [val, setVal] = useState(String(aluno.pontuacao ?? 0));
+  const [saving, setSaving] = useState(false);
+  const dirty = val !== String(aluno.pontuacao ?? 0);
+  const save = async () => {
+    const pontos = Math.max(0, parseInt(val || "0", 10) || 0);
+    setSaving(true);
+    const isVit = aluno.id.startsWith("vit-");
+    const { error } = isVit
+      ? await supabase.from("acessos_vitalicios").update({ pontuacao: pontos }).eq("id", aluno.id.replace("vit-", ""))
+      : await supabase.from("profiles").update({ pontuacao: pontos }).eq("id", aluno.id);
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    setVal(String(pontos));
+    toast.success("Pontuação atualizada");
+    qc.invalidateQueries({ queryKey: ["alunos-all"] });
+    qc.invalidateQueries({ queryKey: ["acessos-vitalicios"] });
+    qc.invalidateQueries({ queryKey: ["ranking"] });
+  };
+  return (
+    <div className="flex items-center gap-1">
+      <div className="relative">
+        <Trophy className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-flame" />
+        <Input
+          type="number"
+          min={0}
+          value={val}
+          onChange={(e) => setVal(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") save(); }}
+          className="h-8 w-24 bg-secondary/40 pl-7 text-xs"
+        />
+      </div>
+      {dirty && (
+        <Button size="sm" className="h-8 bg-flame px-2" disabled={saving} onClick={save}>
+          <Check className="h-3.5 w-3.5" />
+        </Button>
+      )}
+    </div>
+  );
+}
+
 
 function EditAlunoDialog({ aluno, turmas, onClose, onSaved }: { aluno: Aluno | null; turmas: { id: string; nome: string }[]; onClose: () => void; onSaved: () => void }) {
   const [nome, setNome] = useState("");

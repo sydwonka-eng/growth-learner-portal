@@ -22,6 +22,7 @@ export type Database = {
           id: string
           nome: string | null
           nota: string | null
+          pontuacao: number
           telefone: string | null
           turma_id: string | null
         }
@@ -32,6 +33,7 @@ export type Database = {
           id?: string
           nome?: string | null
           nota?: string | null
+          pontuacao?: number
           telefone?: string | null
           turma_id?: string | null
         }
@@ -42,6 +44,7 @@ export type Database = {
           id?: string
           nome?: string | null
           nota?: string | null
+          pontuacao?: number
           telefone?: string | null
           turma_id?: string | null
         }
@@ -171,6 +174,7 @@ export type Database = {
           email: string
           id: string
           nome: string
+          pontuacao: number
           telefone: string | null
           turma_id: string | null
         }
@@ -180,6 +184,7 @@ export type Database = {
           email: string
           id: string
           nome: string
+          pontuacao?: number
           telefone?: string | null
           turma_id?: string | null
         }
@@ -189,6 +194,7 @@ export type Database = {
           email?: string
           id?: string
           nome?: string
+          pontuacao?: number
           telefone?: string | null
           turma_id?: string | null
         }

@@ -118,4 +118,31 @@
       radial-gradient(2px 2px at 40% 80%, oklch(0.7 0.15 45 / 0.3), transparent);
     background-size: 400px 400px;
   }
+
+  /* Ranking / gamification */
+  .rank-shimmer {
+    background: linear-gradient(110deg, transparent 30%, oklch(1 0 0 / 0.12) 50%, transparent 70%);
+    background-size: 200% 100%;
+    animation: rank-shimmer 2.5s linear infinite;
+  }
+  @keyframes rank-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  @keyframes rank-rise {
+    0% { opacity: 0; transform: translateY(24px) scale(0.96); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .rank-rise { animation: rank-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  @keyframes rank-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .rank-float { animation: rank-float 3s ease-in-out infinite; }
+  @keyframes crown-glow {
+    0%, 100% { filter: drop-shadow(0 0 4px oklch(0.8 0.18 80 / 0.6)); }
+    50% { filter: drop-shadow(0 0 14px oklch(0.85 0.2 80 / 0.9)); }
+  }
+  .crown-glow { animation: crown-glow 2s ease-in-out infinite; }
 }
+
