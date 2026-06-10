@@ -10,6 +10,7 @@ const nav = [
   { to: "/aluno", label: "Aulas", icon: <BookOpen className="h-4 w-4" /> },
   { to: "/aluno/tarefas", label: "Tarefas", icon: <KanbanSquare className="h-4 w-4" /> },
   { to: "/aluno/agenda", label: "Agenda", icon: <Calendar className="h-4 w-4" /> },
+  { to: "/aluno/ranking", label: "Ranking", icon: <Trophy className="h-4 w-4" /> },
 ];
 
 function Layout() {
