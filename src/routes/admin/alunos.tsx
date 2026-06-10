@@ -183,6 +183,7 @@ function Table({ rows, turmas, onEdit }: { rows: Aluno[]; turmas: { id: string; 
                     </SelectContent>
                   </Select>
                 </td>
+                <td className="px-3 py-3"><PointsCell aluno={a} /></td>
                 <td className="px-3 py-3 w-40"><div className="flex items-center gap-2"><Progress value={0} className="h-1.5" /><span className="text-xs text-muted-foreground">0%</span></div></td>
                 <td className="px-3 py-3 text-muted-foreground">{format(new Date(a.created_at), "dd 'de' MMM. 'de' yyyy", { locale: ptBR })}</td>
                 <td className="px-3 py-3"><div className="flex gap-1">
