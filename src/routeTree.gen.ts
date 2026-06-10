@@ -22,6 +22,7 @@ import { Route as AlunoIndexRouteImport } from './routes/aluno/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AlunoTarefasRouteImport } from './routes/aluno/tarefas'
 import { Route as AlunoAgendaRouteImport } from './routes/aluno/agenda'
+import { Route as AdminRankingRouteImport } from './routes/admin/ranking'
 import { Route as AdminConteudosRouteImport } from './routes/admin/conteudos'
 import { Route as AdminAlunosRouteImport } from './routes/admin/alunos'
 import { Route as AdminAgendaRouteImport } from './routes/admin/agenda'
@@ -93,6 +94,11 @@ const AlunoAgendaRoute = AlunoAgendaRouteImport.update({
   path: '/agenda',
   getParentRoute: () => AlunoRoute,
 } as any)
+const AdminRankingRoute = AdminRankingRouteImport.update({
+  id: '/ranking',
+  path: '/ranking',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminConteudosRoute = AdminConteudosRouteImport.update({
   id: '/conteudos',
   path: '/conteudos',
@@ -133,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/alunos': typeof AdminAlunosRoute
   '/admin/conteudos': typeof AdminConteudosRoute
+  '/admin/ranking': typeof AdminRankingRoute
   '/aluno/agenda': typeof AlunoAgendaRoute
   '/aluno/tarefas': typeof AlunoTarefasRoute
   '/admin/': typeof AdminIndexRoute
@@ -151,6 +158,7 @@ export interface FileRoutesByTo {
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/alunos': typeof AdminAlunosRoute
   '/admin/conteudos': typeof AdminConteudosRoute
+  '/admin/ranking': typeof AdminRankingRoute
   '/aluno/agenda': typeof AlunoAgendaRoute
   '/aluno/tarefas': typeof AlunoTarefasRoute
   '/admin': typeof AdminIndexRoute
@@ -172,6 +180,7 @@ export interface FileRoutesById {
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/alunos': typeof AdminAlunosRoute
   '/admin/conteudos': typeof AdminConteudosRoute
+  '/admin/ranking': typeof AdminRankingRoute
   '/aluno/agenda': typeof AlunoAgendaRoute
   '/aluno/tarefas': typeof AlunoTarefasRoute
   '/admin/': typeof AdminIndexRoute
@@ -194,6 +203,7 @@ export interface FileRouteTypes {
     | '/admin/agenda'
     | '/admin/alunos'
     | '/admin/conteudos'
+    | '/admin/ranking'
     | '/aluno/agenda'
     | '/aluno/tarefas'
     | '/admin/'
@@ -212,6 +222,7 @@ export interface FileRouteTypes {
     | '/admin/agenda'
     | '/admin/alunos'
     | '/admin/conteudos'
+    | '/admin/ranking'
     | '/aluno/agenda'
     | '/aluno/tarefas'
     | '/admin'
@@ -232,6 +243,7 @@ export interface FileRouteTypes {
     | '/admin/agenda'
     | '/admin/alunos'
     | '/admin/conteudos'
+    | '/admin/ranking'
     | '/aluno/agenda'
     | '/aluno/tarefas'
     | '/admin/'
@@ -344,6 +356,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AlunoAgendaRouteImport
       parentRoute: typeof AlunoRoute
     }
+    '/admin/ranking': {
+      id: '/admin/ranking'
+      path: '/ranking'
+      fullPath: '/admin/ranking'
+      preLoaderRoute: typeof AdminRankingRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/conteudos': {
       id: '/admin/conteudos'
       path: '/conteudos'
@@ -387,6 +406,7 @@ interface AdminRouteChildren {
   AdminAgendaRoute: typeof AdminAgendaRoute
   AdminAlunosRoute: typeof AdminAlunosRoute
   AdminConteudosRoute: typeof AdminConteudosRoute
+  AdminRankingRoute: typeof AdminRankingRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -395,6 +415,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAgendaRoute: AdminAgendaRoute,
   AdminAlunosRoute: AdminAlunosRoute,
   AdminConteudosRoute: AdminConteudosRoute,
+  AdminRankingRoute: AdminRankingRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
@@ -430,3 +451,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
