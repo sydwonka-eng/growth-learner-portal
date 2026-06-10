@@ -21,6 +21,7 @@ const nav = [
   { to: "/admin/conteudos", label: "Conteúdos", icon: <BookOpen className="h-4 w-4" /> },
   { to: "/admin/agenda", label: "Agenda", icon: <Calendar className="h-4 w-4" /> },
   { to: "/admin/acessos", label: "Vitalícios", icon: <InfinityIcon className="h-4 w-4" /> },
+  { to: "/admin/ranking", label: "Ranking", icon: <Trophy className="h-4 w-4" /> },
 ];
 
 function Layout() {
