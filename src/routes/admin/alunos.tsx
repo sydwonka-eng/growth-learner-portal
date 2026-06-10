@@ -46,7 +46,7 @@ function Page() {
     queryFn: async () => {
       const { data, error } = await supabase.from("acessos_vitalicios").select("*").order("created_at", { ascending: false });
       if (error) throw error;
-      return data as { id: string; email: string; nome: string | null; telefone: string | null; turma_id: string | null; created_at: string }[];
+      return data as { id: string; email: string; nome: string | null; telefone: string | null; turma_id: string | null; created_at: string; pontuacao: number }[];
     },
   });
 
