@@ -21,6 +21,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AlunoIndexRouteImport } from './routes/aluno/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AlunoTarefasRouteImport } from './routes/aluno/tarefas'
+import { Route as AlunoRankingRouteImport } from './routes/aluno/ranking'
 import { Route as AlunoAgendaRouteImport } from './routes/aluno/agenda'
 import { Route as AdminRankingRouteImport } from './routes/admin/ranking'
 import { Route as AdminConteudosRouteImport } from './routes/admin/conteudos'
@@ -89,6 +90,11 @@ const AlunoTarefasRoute = AlunoTarefasRouteImport.update({
   path: '/tarefas',
   getParentRoute: () => AlunoRoute,
 } as any)
+const AlunoRankingRoute = AlunoRankingRouteImport.update({
+  id: '/ranking',
+  path: '/ranking',
+  getParentRoute: () => AlunoRoute,
+} as any)
 const AlunoAgendaRoute = AlunoAgendaRouteImport.update({
   id: '/agenda',
   path: '/agenda',
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/admin/conteudos': typeof AdminConteudosRoute
   '/admin/ranking': typeof AdminRankingRoute
   '/aluno/agenda': typeof AlunoAgendaRoute
+  '/aluno/ranking': typeof AlunoRankingRoute
   '/aluno/tarefas': typeof AlunoTarefasRoute
   '/admin/': typeof AdminIndexRoute
   '/aluno/': typeof AlunoIndexRoute
@@ -160,6 +167,7 @@ export interface FileRoutesByTo {
   '/admin/conteudos': typeof AdminConteudosRoute
   '/admin/ranking': typeof AdminRankingRoute
   '/aluno/agenda': typeof AlunoAgendaRoute
+  '/aluno/ranking': typeof AlunoRankingRoute
   '/aluno/tarefas': typeof AlunoTarefasRoute
   '/admin': typeof AdminIndexRoute
   '/aluno': typeof AlunoIndexRoute
@@ -182,6 +190,7 @@ export interface FileRoutesById {
   '/admin/conteudos': typeof AdminConteudosRoute
   '/admin/ranking': typeof AdminRankingRoute
   '/aluno/agenda': typeof AlunoAgendaRoute
+  '/aluno/ranking': typeof AlunoRankingRoute
   '/aluno/tarefas': typeof AlunoTarefasRoute
   '/admin/': typeof AdminIndexRoute
   '/aluno/': typeof AlunoIndexRoute
@@ -205,6 +214,7 @@ export interface FileRouteTypes {
     | '/admin/conteudos'
     | '/admin/ranking'
     | '/aluno/agenda'
+    | '/aluno/ranking'
     | '/aluno/tarefas'
     | '/admin/'
     | '/aluno/'
@@ -224,6 +234,7 @@ export interface FileRouteTypes {
     | '/admin/conteudos'
     | '/admin/ranking'
     | '/aluno/agenda'
+    | '/aluno/ranking'
     | '/aluno/tarefas'
     | '/admin'
     | '/aluno'
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
     | '/admin/conteudos'
     | '/admin/ranking'
     | '/aluno/agenda'
+    | '/aluno/ranking'
     | '/aluno/tarefas'
     | '/admin/'
     | '/aluno/'
@@ -349,6 +361,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AlunoTarefasRouteImport
       parentRoute: typeof AlunoRoute
     }
+    '/aluno/ranking': {
+      id: '/aluno/ranking'
+      path: '/ranking'
+      fullPath: '/aluno/ranking'
+      preLoaderRoute: typeof AlunoRankingRouteImport
+      parentRoute: typeof AlunoRoute
+    }
     '/aluno/agenda': {
       id: '/aluno/agenda'
       path: '/agenda'
@@ -423,6 +442,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AlunoRouteChildren {
   AlunoAgendaRoute: typeof AlunoAgendaRoute
+  AlunoRankingRoute: typeof AlunoRankingRoute
   AlunoTarefasRoute: typeof AlunoTarefasRoute
   AlunoIndexRoute: typeof AlunoIndexRoute
   AlunoAulasAulaIdRoute: typeof AlunoAulasAulaIdRoute
@@ -430,6 +450,7 @@ interface AlunoRouteChildren {
 
 const AlunoRouteChildren: AlunoRouteChildren = {
   AlunoAgendaRoute: AlunoAgendaRoute,
+  AlunoRankingRoute: AlunoRankingRoute,
   AlunoTarefasRoute: AlunoTarefasRoute,
   AlunoIndexRoute: AlunoIndexRoute,
   AlunoAulasAulaIdRoute: AlunoAulasAulaIdRoute,
