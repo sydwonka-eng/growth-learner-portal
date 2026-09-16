@@ -112,10 +112,10 @@
   .glow { box-shadow: var(--shadow-glow); }
   .starfield {
     background-image:
-      radial-gradient(1px 1px at 20% 30%, oklch(0.8 0.15 40 / 0.6), transparent),
-      radial-gradient(1px 1px at 60% 70%, oklch(0.8 0.15 50 / 0.4), transparent),
-      radial-gradient(1px 1px at 80% 20%, oklch(0.8 0.15 30 / 0.5), transparent),
-      radial-gradient(2px 2px at 40% 80%, oklch(0.7 0.15 45 / 0.3), transparent);
+      radial-gradient(1px 1px at 20% 30%, oklch(0.9 0.01 260 / 0.5), transparent),
+      radial-gradient(1px 1px at 60% 70%, oklch(0.65 0.22 27 / 0.45), transparent),
+      radial-gradient(1px 1px at 80% 20%, oklch(0.9 0.01 260 / 0.4), transparent),
+      radial-gradient(2px 2px at 40% 80%, oklch(0.6 0.22 27 / 0.35), transparent);
     background-size: 400px 400px;
   }
 
