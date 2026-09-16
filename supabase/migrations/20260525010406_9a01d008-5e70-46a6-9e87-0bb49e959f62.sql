@@ -1,1 +1,0 @@
-GRANT EXECUTE ON FUNCTION public.claim_admin() TO authenticated;
