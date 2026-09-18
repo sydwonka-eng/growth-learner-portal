@@ -82,6 +82,36 @@ export type Database = {
           },
         ]
       }
+      arsenal: {
+        Row: {
+          capa_url: string | null
+          created_at: string
+          descricao: string | null
+          id: string
+          link: string | null
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          capa_url?: string | null
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          link?: string | null
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          capa_url?: string | null
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          link?: string | null
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       aulas: {
         Row: {
           capa_url: string | null

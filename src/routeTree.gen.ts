@@ -22,9 +22,11 @@ import { Route as AlunoIndexRouteImport } from './routes/aluno/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AlunoTarefasRouteImport } from './routes/aluno/tarefas'
 import { Route as AlunoRankingRouteImport } from './routes/aluno/ranking'
+import { Route as AlunoArsenalRouteImport } from './routes/aluno/arsenal'
 import { Route as AlunoAgendaRouteImport } from './routes/aluno/agenda'
 import { Route as AdminRankingRouteImport } from './routes/admin/ranking'
 import { Route as AdminConteudosRouteImport } from './routes/admin/conteudos'
+import { Route as AdminArsenalRouteImport } from './routes/admin/arsenal'
 import { Route as AdminAlunosRouteImport } from './routes/admin/alunos'
 import { Route as AdminAgendaRouteImport } from './routes/admin/agenda'
 import { Route as AdminAcessosRouteImport } from './routes/admin/acessos'
@@ -95,6 +97,11 @@ const AlunoRankingRoute = AlunoRankingRouteImport.update({
   path: '/ranking',
   getParentRoute: () => AlunoRoute,
 } as any)
+const AlunoArsenalRoute = AlunoArsenalRouteImport.update({
+  id: '/arsenal',
+  path: '/arsenal',
+  getParentRoute: () => AlunoRoute,
+} as any)
 const AlunoAgendaRoute = AlunoAgendaRouteImport.update({
   id: '/agenda',
   path: '/agenda',
@@ -108,6 +115,11 @@ const AdminRankingRoute = AdminRankingRouteImport.update({
 const AdminConteudosRoute = AdminConteudosRouteImport.update({
   id: '/conteudos',
   path: '/conteudos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminArsenalRoute = AdminArsenalRouteImport.update({
+  id: '/arsenal',
+  path: '/arsenal',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAlunosRoute = AdminAlunosRouteImport.update({
@@ -144,9 +156,11 @@ export interface FileRoutesByFullPath {
   '/admin/acessos': typeof AdminAcessosRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/alunos': typeof AdminAlunosRoute
+  '/admin/arsenal': typeof AdminArsenalRoute
   '/admin/conteudos': typeof AdminConteudosRoute
   '/admin/ranking': typeof AdminRankingRoute
   '/aluno/agenda': typeof AlunoAgendaRoute
+  '/aluno/arsenal': typeof AlunoArsenalRoute
   '/aluno/ranking': typeof AlunoRankingRoute
   '/aluno/tarefas': typeof AlunoTarefasRoute
   '/admin/': typeof AdminIndexRoute
@@ -164,9 +178,11 @@ export interface FileRoutesByTo {
   '/admin/acessos': typeof AdminAcessosRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/alunos': typeof AdminAlunosRoute
+  '/admin/arsenal': typeof AdminArsenalRoute
   '/admin/conteudos': typeof AdminConteudosRoute
   '/admin/ranking': typeof AdminRankingRoute
   '/aluno/agenda': typeof AlunoAgendaRoute
+  '/aluno/arsenal': typeof AlunoArsenalRoute
   '/aluno/ranking': typeof AlunoRankingRoute
   '/aluno/tarefas': typeof AlunoTarefasRoute
   '/admin': typeof AdminIndexRoute
@@ -187,9 +203,11 @@ export interface FileRoutesById {
   '/admin/acessos': typeof AdminAcessosRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/alunos': typeof AdminAlunosRoute
+  '/admin/arsenal': typeof AdminArsenalRoute
   '/admin/conteudos': typeof AdminConteudosRoute
   '/admin/ranking': typeof AdminRankingRoute
   '/aluno/agenda': typeof AlunoAgendaRoute
+  '/aluno/arsenal': typeof AlunoArsenalRoute
   '/aluno/ranking': typeof AlunoRankingRoute
   '/aluno/tarefas': typeof AlunoTarefasRoute
   '/admin/': typeof AdminIndexRoute
@@ -211,9 +229,11 @@ export interface FileRouteTypes {
     | '/admin/acessos'
     | '/admin/agenda'
     | '/admin/alunos'
+    | '/admin/arsenal'
     | '/admin/conteudos'
     | '/admin/ranking'
     | '/aluno/agenda'
+    | '/aluno/arsenal'
     | '/aluno/ranking'
     | '/aluno/tarefas'
     | '/admin/'
@@ -231,9 +251,11 @@ export interface FileRouteTypes {
     | '/admin/acessos'
     | '/admin/agenda'
     | '/admin/alunos'
+    | '/admin/arsenal'
     | '/admin/conteudos'
     | '/admin/ranking'
     | '/aluno/agenda'
+    | '/aluno/arsenal'
     | '/aluno/ranking'
     | '/aluno/tarefas'
     | '/admin'
@@ -253,9 +275,11 @@ export interface FileRouteTypes {
     | '/admin/acessos'
     | '/admin/agenda'
     | '/admin/alunos'
+    | '/admin/arsenal'
     | '/admin/conteudos'
     | '/admin/ranking'
     | '/aluno/agenda'
+    | '/aluno/arsenal'
     | '/aluno/ranking'
     | '/aluno/tarefas'
     | '/admin/'
@@ -368,6 +392,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AlunoRankingRouteImport
       parentRoute: typeof AlunoRoute
     }
+    '/aluno/arsenal': {
+      id: '/aluno/arsenal'
+      path: '/arsenal'
+      fullPath: '/aluno/arsenal'
+      preLoaderRoute: typeof AlunoArsenalRouteImport
+      parentRoute: typeof AlunoRoute
+    }
     '/aluno/agenda': {
       id: '/aluno/agenda'
       path: '/agenda'
@@ -387,6 +418,13 @@ declare module '@tanstack/react-router' {
       path: '/conteudos'
       fullPath: '/admin/conteudos'
       preLoaderRoute: typeof AdminConteudosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/arsenal': {
+      id: '/admin/arsenal'
+      path: '/arsenal'
+      fullPath: '/admin/arsenal'
+      preLoaderRoute: typeof AdminArsenalRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/alunos': {
@@ -424,6 +462,7 @@ interface AdminRouteChildren {
   AdminAcessosRoute: typeof AdminAcessosRoute
   AdminAgendaRoute: typeof AdminAgendaRoute
   AdminAlunosRoute: typeof AdminAlunosRoute
+  AdminArsenalRoute: typeof AdminArsenalRoute
   AdminConteudosRoute: typeof AdminConteudosRoute
   AdminRankingRoute: typeof AdminRankingRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -433,6 +472,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAcessosRoute: AdminAcessosRoute,
   AdminAgendaRoute: AdminAgendaRoute,
   AdminAlunosRoute: AdminAlunosRoute,
+  AdminArsenalRoute: AdminArsenalRoute,
   AdminConteudosRoute: AdminConteudosRoute,
   AdminRankingRoute: AdminRankingRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -442,6 +482,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AlunoRouteChildren {
   AlunoAgendaRoute: typeof AlunoAgendaRoute
+  AlunoArsenalRoute: typeof AlunoArsenalRoute
   AlunoRankingRoute: typeof AlunoRankingRoute
   AlunoTarefasRoute: typeof AlunoTarefasRoute
   AlunoIndexRoute: typeof AlunoIndexRoute
@@ -450,6 +491,7 @@ interface AlunoRouteChildren {
 
 const AlunoRouteChildren: AlunoRouteChildren = {
   AlunoAgendaRoute: AlunoAgendaRoute,
+  AlunoArsenalRoute: AlunoArsenalRoute,
   AlunoRankingRoute: AlunoRankingRoute,
   AlunoTarefasRoute: AlunoTarefasRoute,
   AlunoIndexRoute: AlunoIndexRoute,
