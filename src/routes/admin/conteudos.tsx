@@ -114,9 +114,14 @@ function Page() {
           <h2 className="text-xl font-bold">Conteúdos</h2>
           <p className="text-sm text-muted-foreground">Gerencie encontros e tarefas da turma</p>
         </div>
-        <Button variant="outline" onClick={() => setNewTask(true)} disabled={!selected || aulas.length === 0}>
-          <Plus className="mr-1 h-4 w-4" /> Nova Tarefa
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button className="bg-flame" onClick={novaAula} disabled={!selected || criando}>
+            <Plus className="mr-1 h-4 w-4" /> Nova Aula
+          </Button>
+          <Button variant="outline" onClick={() => setNewTask(true)} disabled={!selected || aulas.length === 0}>
+            <Plus className="mr-1 h-4 w-4" /> Nova Tarefa
+          </Button>
+        </div>
       </div>
 
       {!selected && <p className="py-10 text-center text-muted-foreground">Selecione uma turma no topo da página.</p>}
