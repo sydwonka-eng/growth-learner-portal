@@ -4,6 +4,7 @@ import { LogOut, Menu, X } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export interface NavItem {
   to: string;
@@ -14,28 +15,34 @@ export interface NavItem {
 export function AppShell({
   nav,
   children,
+  variant = "default",
 }: {
   nav: NavItem[];
   children: ReactNode;
+  variant?: "default" | "member";
 }) {
   const { signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
 
+  const member = variant === "member";
+
   const SidebarContent = (
     <>
-      <div className="flex items-center justify-between border-b border-sidebar-border p-5">
-        <Logo size="md" />
-        <button
-          className="rounded-md p-1 text-sidebar-foreground hover:bg-sidebar-accent md:hidden"
+      <div className={cn("flex items-center justify-between border-b border-sidebar-border", member ? "p-4 md:justify-center md:px-2 md:py-6" : "p-5")}>
+        <div className={cn(member && "md:max-w-12 md:overflow-hidden")}><Logo size={member ? "sm" : "md"} /></div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-sidebar-foreground md:hidden"
           onClick={() => setOpen(false)}
           aria-label="Fechar menu"
         >
           <X className="h-5 w-5" />
-        </button>
+        </Button>
       </div>
-      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+      <nav className={cn("flex-1 space-y-1 overflow-y-auto", member ? "p-3 md:px-2 md:py-5" : "p-3")}>
         {nav.map((item) => {
           const active =
             location.pathname === item.to ||
@@ -46,37 +53,41 @@ export function AppShell({
               to={item.to}
               onClick={() => setOpen(false)}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                "group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all",
+                member && "md:h-11 md:justify-center md:px-0",
                 active
-                  ? "bg-flame text-primary-foreground glow"
-                  : "text-sidebar-foreground hover:bg-sidebar-accent",
+                  ? "bg-primary text-primary-foreground shadow-[0_0_24px_color-mix(in_oklab,var(--primary)_35%,transparent)]"
+                  : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-foreground",
               )}
+              title={member ? item.label : undefined}
             >
-              {item.icon}
-              {item.label}
+              <span className="shrink-0">{item.icon}</span>
+              <span className={cn(member && "md:hidden")}>{item.label}</span>
             </Link>
           );
         })}
       </nav>
       <div className="border-t border-sidebar-border p-3">
-        <button
+        <Button
+          variant="ghost"
           onClick={async () => {
             await signOut();
             navigate({ to: "/login" });
           }}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground transition-colors hover:bg-sidebar-accent"
+          className={cn("flex w-full items-center justify-start gap-3 px-3 text-sm font-medium text-sidebar-foreground", member && "md:justify-center md:px-0")}
+          title="Sair"
         >
           <LogOut className="h-4 w-4" />
-          Sair
-        </button>
+          <span className={cn(member && "md:hidden")}>Sair</span>
+        </Button>
       </div>
     </>
   );
 
   return (
-    <div className="flex min-h-dvh bg-background starfield">
+    <div className={cn("flex min-h-dvh bg-background", member ? "member-shell" : "starfield")}>
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
+      <aside className={cn("hidden shrink-0 flex-col border-r border-sidebar-border bg-sidebar/90 backdrop-blur-xl md:flex", member ? "w-20" : "w-64")}>
         {SidebarContent}
       </aside>
 
@@ -93,13 +104,15 @@ export function AppShell({
       <div className="flex flex-1 flex-col min-w-0">
         {/* Mobile topbar */}
         <header className="flex items-center justify-between border-b border-sidebar-border bg-sidebar/90 backdrop-blur px-4 py-3 md:hidden">
-          <button
-            className="rounded-md p-2 text-sidebar-foreground hover:bg-sidebar-accent"
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-sidebar-foreground"
             onClick={() => setOpen(true)}
             aria-label="Abrir menu"
           >
             <Menu className="h-5 w-5" />
-          </button>
+          </Button>
           <Logo size="sm" />
           <div className="w-9" />
         </header>

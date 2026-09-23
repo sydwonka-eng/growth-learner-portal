@@ -5,6 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-display: "Archivo Black", sans-serif;
+  --font-sans: "Hind", sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -97,7 +99,42 @@
     color: var(--color-foreground);
     background-image: var(--gradient-glow);
     background-attachment: fixed;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: "Hind", system-ui, -apple-system, sans-serif;
+  }
+}
+
+.member-shell {
+  background-image: none;
+}
+
+.member-hero-overlay {
+  background:
+    linear-gradient(to top, var(--background) 0%, color-mix(in oklab, var(--background) 88%, transparent) 20%, transparent 62%),
+    linear-gradient(to right, var(--background) 0%, color-mix(in oklab, var(--background) 78%, transparent) 46%, transparent 85%);
+}
+
+.member-card-overlay {
+  background: linear-gradient(to top, color-mix(in oklab, var(--background) 98%, transparent), transparent 65%);
+}
+
+.member-poster-fallback {
+  background-image:
+    linear-gradient(145deg, color-mix(in oklab, var(--primary) 32%, var(--secondary)), var(--secondary) 48%),
+    radial-gradient(circle at 75% 20%, color-mix(in oklab, var(--primary) 28%, transparent), transparent 45%);
+}
+
+.member-rail {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .rank-rise,
+  .rank-float,
+  .crown-glow,
+  .rank-shimmer {
+    animation: none !important;
   }
 }
 

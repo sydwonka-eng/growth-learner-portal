@@ -37,8 +37,8 @@ function Layout() {
   }
 
   return (
-    <AppShell nav={nav as never}>
-      <div className="mx-auto w-full max-w-7xl space-y-6 p-4 sm:p-6 md:p-8">
+    <AppShell nav={nav as never} variant="member">
+      <div className="w-full min-w-0">
         <Outlet />
       </div>
     </AppShell>
