@@ -40,11 +40,10 @@ function Page() {
     if (!selected) return;
     (async () => {
       const { data } = await supabase.from("aulas").select("numero").eq("turma_id", selected);
-      const existentes = new Set(data?.map((a) => a.numero) ?? []);
-      const faltam = [1, 2, 3, 4, 5, 6, 7, 8].filter((n) => !existentes.has(n));
-      if (faltam.length) {
+      // Só cria as 8 aulas iniciais quando a turma ainda não tem nenhuma aula
+      if (!data || data.length === 0) {
         const { error } = await supabase.from("aulas").insert(
-          faltam.map((n) => ({ turma_id: selected, numero: n, titulo: `Aula ${n}`, liberada: false }))
+          [1, 2, 3, 4, 5, 6, 7, 8].map((n) => ({ turma_id: selected, numero: n, titulo: `Aula ${n}`, liberada: false }))
         );
         if (error) toast.error("Erro ao criar aulas: " + error.message);
         qc.invalidateQueries({ queryKey: ["aulas", selected] });
