@@ -40,11 +40,10 @@ function Page() {
     if (!selected) return;
     (async () => {
       const { data } = await supabase.from("aulas").select("numero").eq("turma_id", selected);
-      const existentes = new Set(data?.map((a) => a.numero) ?? []);
-      const faltam = [1, 2, 3, 4, 5, 6, 7, 8].filter((n) => !existentes.has(n));
-      if (faltam.length) {
+      // Só cria as 8 aulas iniciais quando a turma ainda não tem nenhuma aula
+      if (!data || data.length === 0) {
         const { error } = await supabase.from("aulas").insert(
-          faltam.map((n) => ({ turma_id: selected, numero: n, titulo: `Aula ${n}`, liberada: false }))
+          [1, 2, 3, 4, 5, 6, 7, 8].map((n) => ({ turma_id: selected, numero: n, titulo: `Aula ${n}`, liberada: false }))
         );
         if (error) toast.error("Erro ao criar aulas: " + error.message);
         qc.invalidateQueries({ queryKey: ["aulas", selected] });
@@ -79,6 +78,33 @@ function Page() {
     qc.invalidateQueries({ queryKey: ["aulas", selected] });
   };
 
+  const [criando, setCriando] = useState(false);
+  const novaAula = async () => {
+    if (!selected) return;
+    setCriando(true);
+    const proximo = aulas.length ? Math.max(...aulas.map((a) => a.numero)) + 1 : 1;
+    const { error } = await supabase.from("aulas").insert({
+      turma_id: selected,
+      numero: proximo,
+      titulo: `Aula ${proximo}`,
+      liberada: false,
+    });
+    setCriando(false);
+    if (error) return toast.error(error.message);
+    toast.success(`Aula ${proximo} criada`);
+    qc.invalidateQueries({ queryKey: ["aulas", selected] });
+  };
+
+  const delAula = async (aula: Aula) => {
+    if (!confirm(`Remover a aula ${aula.numero} e suas tarefas?`)) return;
+    await supabase.from("tarefas").delete().eq("aula_id", aula.id);
+    const { error } = await supabase.from("aulas").delete().eq("id", aula.id);
+    if (error) return toast.error(error.message);
+    toast.success("Aula removida");
+    qc.invalidateQueries({ queryKey: ["aulas", selected] });
+    qc.invalidateQueries({ queryKey: ["tarefas"] });
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader title="Painel do" highlight="Mentor" subtitle="Olá, Mentor. Gerencie sua tribo." />
@@ -87,9 +113,14 @@ function Page() {
           <h2 className="text-xl font-bold">Conteúdos</h2>
           <p className="text-sm text-muted-foreground">Gerencie encontros e tarefas da turma</p>
         </div>
-        <Button variant="outline" onClick={() => setNewTask(true)} disabled={!selected || aulas.length === 0}>
-          <Plus className="mr-1 h-4 w-4" /> Nova Tarefa
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button className="bg-flame" onClick={novaAula} disabled={!selected || criando}>
+            <Plus className="mr-1 h-4 w-4" /> Nova Aula
+          </Button>
+          <Button variant="outline" onClick={() => setNewTask(true)} disabled={!selected || aulas.length === 0}>
+            <Plus className="mr-1 h-4 w-4" /> Nova Tarefa
+          </Button>
+        </div>
       </div>
 
       {!selected && <p className="py-10 text-center text-muted-foreground">Selecione uma turma no topo da página.</p>}
@@ -118,6 +149,7 @@ function Page() {
                 </div>
                 <div className="flex items-center gap-2">
                   <button onClick={() => setEditAula(aula)} className="rounded p-2 text-muted-foreground hover:bg-secondary hover:text-foreground"><Pencil className="h-4 w-4" /></button>
+                  <button onClick={() => delAula(aula)} className="rounded p-2 text-muted-foreground hover:bg-secondary hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
                   <label className="flex items-center gap-2 rounded-lg bg-secondary px-3 py-1.5 text-xs">
                     <Switch checked={aula.liberada} onCheckedChange={() => toggleLib(aula)} />
                     {aula.liberada ? "Liberado" : "Bloqueado"}
