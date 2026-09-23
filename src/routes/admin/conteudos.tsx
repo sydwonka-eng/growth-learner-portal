@@ -79,6 +79,33 @@ function Page() {
     qc.invalidateQueries({ queryKey: ["aulas", selected] });
   };
 
+  const [criando, setCriando] = useState(false);
+  const novaAula = async () => {
+    if (!selected) return;
+    setCriando(true);
+    const proximo = aulas.length ? Math.max(...aulas.map((a) => a.numero)) + 1 : 1;
+    const { error } = await supabase.from("aulas").insert({
+      turma_id: selected,
+      numero: proximo,
+      titulo: `Aula ${proximo}`,
+      liberada: false,
+    });
+    setCriando(false);
+    if (error) return toast.error(error.message);
+    toast.success(`Aula ${proximo} criada`);
+    qc.invalidateQueries({ queryKey: ["aulas", selected] });
+  };
+
+  const delAula = async (aula: Aula) => {
+    if (!confirm(`Remover a aula ${aula.numero} e suas tarefas?`)) return;
+    await supabase.from("tarefas").delete().eq("aula_id", aula.id);
+    const { error } = await supabase.from("aulas").delete().eq("id", aula.id);
+    if (error) return toast.error(error.message);
+    toast.success("Aula removida");
+    qc.invalidateQueries({ queryKey: ["aulas", selected] });
+    qc.invalidateQueries({ queryKey: ["tarefas"] });
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader title="Painel do" highlight="Mentor" subtitle="Olá, Mentor. Gerencie sua tribo." />
