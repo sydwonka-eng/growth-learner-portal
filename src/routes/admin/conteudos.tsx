@@ -150,6 +150,7 @@ function Page() {
                 </div>
                 <div className="flex items-center gap-2">
                   <button onClick={() => setEditAula(aula)} className="rounded p-2 text-muted-foreground hover:bg-secondary hover:text-foreground"><Pencil className="h-4 w-4" /></button>
+                  <button onClick={() => delAula(aula)} className="rounded p-2 text-muted-foreground hover:bg-secondary hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
                   <label className="flex items-center gap-2 rounded-lg bg-secondary px-3 py-1.5 text-xs">
                     <Switch checked={aula.liberada} onCheckedChange={() => toggleLib(aula)} />
                     {aula.liberada ? "Liberado" : "Bloqueado"}
