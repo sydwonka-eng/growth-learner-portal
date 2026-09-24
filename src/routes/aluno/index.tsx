@@ -193,7 +193,7 @@ function Page() {
             </div>
           </section>
         </>
-      )}
+      ) : null}
     </div>
   );
 }
